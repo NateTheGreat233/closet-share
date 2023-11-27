@@ -13,7 +13,7 @@ export const client = new MongoClient(mongoUri, {
   },
 });
 
-export const DB_NAME = "conception-db"; // Feel free to change db name!
+export const DB_NAME = "closet-share"; // Feel free to change db name!
 
 /**
  * Attempts to complete the connection to {@link client}.
