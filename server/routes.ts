@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 
 import { Router, getExpressRouter } from "./framework/router";
 
-import { Friend, Post, User, WebSession } from "./app";
+import { Friend, Post, Store, User, WebSession } from "./app";
 import { PostDoc, PostOptions } from "./concepts/post";
 import { UserDoc } from "./concepts/user";
 import { WebSessionDoc } from "./concepts/websession";
@@ -28,7 +28,9 @@ class Routes {
   @Router.post("/users")
   async createUser(session: WebSessionDoc, username: string, password: string) {
     WebSession.isLoggedOut(session);
-    return await User.create(username, password);
+    const newUser = (await User.create(username, password)) as { msg: string; user: UserDoc };
+    await Store.createStore(newUser.user._id);
+    return newUser;
   }
 
   @Router.patch("/users")
@@ -55,6 +57,32 @@ class Routes {
   async logOut(session: WebSessionDoc) {
     WebSession.end(session);
     return { msg: "Logged out!" };
+  }
+
+  @Router.get("/store")
+  async getStore(session: WebSessionDoc) {
+    const user = WebSession.getUser(session);
+    const { _id, storeOwner, items } = await Store.getStoreByOwner(user);
+
+    // TODO get the ClothingItem objects from the ClothingItemConcept using `items`.
+    // For now we'll just return a set of the ObjectIds of the ClothingItems.
+    const clothingItems = items;
+
+    return { _id, storeOwner, items: clothingItems };
+  }
+
+  @Router.patch("/store/add/:itemId")
+  async addItemToStore(session: WebSessionDoc, itemId: ObjectId) {
+    const user = WebSession.getUser(session);
+    const storeId = (await Store.getStoreByOwner(user))._id;
+    return await Store.addItem(user, storeId, itemId);
+  }
+
+  @Router.patch("/store/remove/:itemId")
+  async removeItemFromStore(session: WebSessionDoc, itemId: ObjectId) {
+    const user = WebSession.getUser(session);
+    const storeId = (await Store.getStoreByOwner(user))._id;
+    return await Store.removeItem(user, storeId, itemId);
   }
 
   @Router.get("/posts")
