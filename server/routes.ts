@@ -2,7 +2,8 @@ import { ObjectId } from "mongodb";
 
 import { Router, getExpressRouter } from "./framework/router";
 
-import { Friend, Post, Store, User, WebSession } from "./app";
+import { ClothingItem, Friend, Post, Store, User, WebSession } from "./app";
+import { ClothingItemDoc } from "./concepts/clothingitem";
 import { PostDoc, PostOptions } from "./concepts/post";
 import { UserDoc } from "./concepts/user";
 import { WebSessionDoc } from "./concepts/websession";
@@ -163,6 +164,50 @@ class Routes {
     const user = WebSession.getUser(session);
     const fromId = (await User.getUserByUsername(from))._id;
     return await Friend.rejectRequest(fromId, user);
+  }
+
+  @Router.get("/clothingItems")
+  async getClothingItems(owner?: string) {
+    let clothingItems;
+    if (owner) {
+      const id = (await User.getUserByUsername(owner))._id;
+      clothingItems = await ClothingItem.getClothingItems(id);
+    } else {
+      clothingItems = await ClothingItem.getAllClothingItems({});
+    }
+    return Responses.clothingItems(clothingItems);
+  }
+
+  @Router.post("/clothingItems")
+  async createClothingItem(session: WebSessionDoc, name: string, description: string, imageUrl: string) {
+    const user = WebSession.getUser(session);
+    const created = await ClothingItem.create(user, name, description, imageUrl);
+    return { msg: created.msg, clothingItem: await Responses.clothingItem(created.clothingItem) };
+  }
+
+  @Router.patch("/clothingItems/:_id")
+  async updateClothingItem(session: WebSessionDoc, _id: ObjectId, update: Partial<ClothingItemDoc>) {
+    const user = WebSession.getUser(session);
+    await ClothingItem.isOwner(user, _id);
+    return await ClothingItem.update(_id, update);
+  }
+
+  @Router.delete("/clothingItems/:_id")
+  async deleteClothingItem(session: WebSessionDoc, _id: ObjectId) {
+    const user = WebSession.getUser(session);
+    await ClothingItem.isOwner(user, _id);
+    return ClothingItem.removeClothingItem(_id);
+  }
+
+  @Router.patch("/borrow/clothingItems/:_id")
+  async borrow(session: WebSessionDoc, _id: ObjectId) {
+    const user = WebSession.getUser(session);
+    return await ClothingItem.borrow(_id, user);
+  }
+
+  @Router.patch("/return/clothingItems/:_id")
+  async returnClothingItem(_id: ObjectId) {
+    return await ClothingItem.returnClothingItem(_id);
   }
 }
 
