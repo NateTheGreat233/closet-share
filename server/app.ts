@@ -1,3 +1,4 @@
+import ClothingItemConcept from "./concepts/clothingitem";
 import FriendConcept from "./concepts/friend";
 import PostConcept from "./concepts/post";
 import StoreConcept from "./concepts/store";
@@ -10,3 +11,4 @@ export const User = new UserConcept();
 export const Post = new PostConcept();
 export const Friend = new FriendConcept();
 export const Store = new StoreConcept();
+export const ClothingItem = new ClothingItemConcept();
