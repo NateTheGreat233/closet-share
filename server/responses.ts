@@ -1,4 +1,5 @@
 import { User } from "./app";
+import { ClothingItemDoc } from "./concepts/clothingitem";
 import { AlreadyFriendsError, FriendNotFoundError, FriendRequestAlreadyExistsError, FriendRequestDoc, FriendRequestNotFoundError } from "./concepts/friend";
 import { PostAuthorNotMatchError, PostDoc } from "./concepts/post";
 import { Router } from "./framework/router";
@@ -25,6 +26,25 @@ export default class Responses {
   static async posts(posts: PostDoc[]) {
     const authors = await User.idsToUsernames(posts.map((post) => post.author));
     return posts.map((post, i) => ({ ...post, author: authors[i] }));
+  }
+
+  /**
+   * Convert ClothingItemDoc into more readable format for the frontend.
+   */
+  static async clothingItem(clothingItem: ClothingItemDoc | null) {
+    if (!clothingItem) {
+      return clothingItem;
+    }
+    const owner = await User.getUserById(clothingItem.owner);
+    return { ...clothingItem, author: owner.username };
+  }
+
+  /**
+   * Same as {@link clothingItem} but for an array of ClothingItemDoc for improved performance.
+   */
+  static async clothingItems(clothingItems: ClothingItemDoc[]) {
+    const owners = await User.idsToUsernames(clothingItems.map((clothingItem) => clothingItem.owner));
+    return clothingItems.map((clothingItem, i) => ({ ...clothingItem, owner: owners[i] }));
   }
 
   /**
