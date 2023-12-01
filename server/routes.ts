@@ -60,11 +60,10 @@ class Routes {
     return { msg: "Logged out!" };
   }
 
-  @Router.get("/store")
-  async getStore(session: WebSessionDoc) {
-    const user = WebSession.getUser(session);
-    const { _id, storeOwner, items } = await Store.getStoreByOwner(user);
-
+  @Router.get("/store/:username")
+  async getStore(username: string) {
+    const user = await User.getUserByUsername(username);
+    const { _id, storeOwner, items } = await Store.getStoreByOwner(user._id);
     // TODO get the ClothingItem objects from the ClothingItemConcept using `items`.
     // For now we'll just return a set of the ObjectIds of the ClothingItems.
     const clothingItems = items;
