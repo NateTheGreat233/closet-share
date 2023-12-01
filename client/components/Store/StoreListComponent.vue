@@ -25,9 +25,7 @@ onBeforeMount(async () => {
 
 <template>
   <h2>Store Items:</h2>
-  <ul>
-    <li v-for="item in store.items" :key="item">{{ item }}</li>
-  </ul>
+  {{ store }}
 </template>
 
 <style></style>
