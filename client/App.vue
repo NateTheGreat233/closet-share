@@ -1,14 +1,14 @@
 <script setup lang="ts">
+import Navbar from "@/components/Navbar/Navbar.vue";
 import { useToastStore } from "@/stores/toast";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
-import { computed, onBeforeMount } from "vue";
-import { RouterLink, RouterView, useRoute } from "vue-router";
+import { onBeforeMount, watchEffect } from "vue";
+import { RouterView } from "vue-router";
+import router from "./router";
 
-const currentRoute = useRoute();
-const currentRouteName = computed(() => currentRoute.name);
 const userStore = useUserStore();
-const { isLoggedIn, currentUsername } = storeToRefs(userStore);
+const { isLoggedIn } = storeToRefs(userStore);
 const { toast } = storeToRefs(useToastStore());
 
 // Make sure to update the session before mounting the app in case the user is already logged in
@@ -19,32 +19,18 @@ onBeforeMount(async () => {
     // User is not logged in
   }
 });
+
+watchEffect(() => {
+  // if unauthenticated, send to the login page
+  if (!isLoggedIn.value) {
+    router.push({ name: "Login" });
+  }
+});
 </script>
 
 <template>
   <header>
-    <nav>
-      <div class="title">
-        <img src="@/assets/images/logo.svg" />
-        <RouterLink :to="{ name: 'Home' }">
-          <h1>Social Media App</h1>
-        </RouterLink>
-      </div>
-      <ul>
-        <li>
-          <RouterLink :to="{ name: 'Home' }" :class="{ underline: currentRouteName == 'Home' }"> Home </RouterLink>
-        </li>
-        <li v-if="isLoggedIn">
-          <RouterLink :to="{ name: 'Closet', params: { username: currentUsername } }" :class="{ underline: currentRouteName == 'Closet' }"> My Closet </RouterLink>
-        </li>
-        <li v-if="isLoggedIn">
-          <RouterLink :to="{ name: 'Settings' }" :class="{ underline: currentRouteName == 'Settings' }"> Settings </RouterLink>
-        </li>
-        <li v-else>
-          <RouterLink :to="{ name: 'Login' }" :class="{ underline: currentRouteName == 'Login' }"> Login </RouterLink>
-        </li>
-      </ul>
-    </nav>
+    <Navbar />
     <article v-if="toast !== null" class="toast" :class="toast.style">
       <p>{{ toast.message }}</p>
     </article>
@@ -54,13 +40,6 @@ onBeforeMount(async () => {
 
 <style scoped>
 @import "./assets/toast.css";
-
-nav {
-  padding: 1em 2em;
-  background-color: lightgray;
-  display: flex;
-  align-items: center;
-}
 
 h1 {
   font-size: 2em;
@@ -90,9 +69,5 @@ ul {
   align-items: center;
   flex-direction: row;
   gap: 1em;
-}
-
-.underline {
-  text-decoration: underline;
 }
 </style>

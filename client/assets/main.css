@@ -3,6 +3,28 @@
 :root {
   --red: rgb(208, 67, 12);
   --base-bg: #f1f3f5;
+  --beige: #f4edde;
+  --maroon: #411d2a;
+}
+
+/* make all text be the maroon color */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--maroon);
+}
+
+* {
+  font-family: caladea;
+}
+
+/* Make large text Calistoga */
+h1 {
+  font-family: calistoga;
+  font-weight: 400; /* make the font a little lighter to match figma better */
 }
 
 button.btn-small {
