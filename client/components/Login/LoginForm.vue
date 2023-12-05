@@ -9,8 +9,13 @@ const { loginUser, updateSession } = useUserStore();
 
 async function login() {
   await loginUser(username.value, password.value);
-  void updateSession();
-  void router.push({ name: "Home" });
+
+  // this await is important! It allows us to authenticate the user
+  // before routing to a page that requires auth. Otherwise it will get
+  // kicked off the page
+  await updateSession();
+
+  void router.push({ name: "Dashboard" });
 }
 </script>
 

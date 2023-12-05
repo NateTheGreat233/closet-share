@@ -1,0 +1,9 @@
+@font-face {
+  font-family: "calistoga";
+  src: url("./fonts/Calistoga-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "caladea";
+  src: url("./fonts/Caladea-Regular.ttf") format("truetype");
+}
