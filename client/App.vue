@@ -6,10 +6,12 @@ import { storeToRefs } from "pinia";
 import { onBeforeMount, watchEffect } from "vue";
 import { RouterView } from "vue-router";
 import router from "./router";
+import { useClothingItemStore } from "./stores/clothingItem";
 
 const userStore = useUserStore();
 const { isLoggedIn } = storeToRefs(userStore);
 const { toast } = storeToRefs(useToastStore());
+const { onSignIn } = useClothingItemStore();
 
 // Make sure to update the session before mounting the app in case the user is already logged in
 onBeforeMount(async () => {
@@ -20,10 +22,14 @@ onBeforeMount(async () => {
   }
 });
 
-watchEffect(() => {
-  // if unauthenticated, send to the login page
+watchEffect(async () => {
   if (!isLoggedIn.value) {
+    // if unauthenticated, send to the login page
     router.push({ name: "Login" });
+  } else {
+    // if authenticated, let's grab all the data we need and persist in store(s)
+    const allTasks = [onSignIn];
+    await Promise.all(allTasks);
   }
 });
 </script>

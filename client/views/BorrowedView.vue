@@ -1,28 +1,18 @@
 <script setup lang="ts">
 import Search from "@/components/Search/Search.vue";
-import { onBeforeMount, ref } from "vue";
+import { storeToRefs } from "pinia";
+import { onBeforeMount } from "vue";
 import BorrowedItemComponent from "../components/ClothingItem/BorrowedItemComponent.vue";
-import { fetchy } from "../utils/fetchy";
+import { useClothingItemStore } from "../stores/clothingItem";
 
-const loaded = ref(false);
-let clothingItems = ref<Array<Record<string, string>>>([]);
-let searchOwner = ref("");
-
-const getClothingItems = async (owner?: string) => {
-  let query: Record<string, string> = owner !== undefined ? { owner } : {};
-  let clothingItemResults;
-  try {
-    clothingItemResults = await fetchy("/api/clothingItems", "GET", { query });
-  } catch (_) {
-    return;
-  }
-  searchOwner.value = owner ? owner : "";
-  clothingItems.value = clothingItemResults;
-};
+const { allClothingItems } = storeToRefs(useClothingItemStore());
+const { getAllClothingItems } = useClothingItemStore();
 
 onBeforeMount(async () => {
-  await getClothingItems();
-  loaded.value = true;
+  // only if we haven't pre-populated the data, we'll fetch again
+  if (allClothingItems.value === undefined) {
+    await getAllClothingItems();
+  }
 });
 </script>
 
@@ -38,7 +28,7 @@ onBeforeMount(async () => {
         </div>
       </div>
       <div class="listing-wrapper">
-        <div v-for="item in clothingItems" class="listing-container">
+        <div v-for="item in allClothingItems" class="listing-container">
           <BorrowedItemComponent :owner="item.owner" :name="item.name" :description="item.description" :imageUrl="item.imageUrl" />
         </div>
       </div>
