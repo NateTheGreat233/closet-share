@@ -1,9 +1,13 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const { inputWidth } = defineProps({
+  inputWidth: String || undefined,
+});
+</script>
 
 <template>
   <div class="search-bar">
     <img src="@/assets/images/search.png" class="search-icon" @dragstart="(e) => e.preventDefault()" />
-    <input type="text" placeholder="search borrowed items" />
+    <input type="text" placeholder="search borrowed items" :style="{ width: inputWidth }" />
   </div>
 </template>
 

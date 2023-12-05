@@ -2,6 +2,7 @@
 import router from "@/router";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
+import GroupsOnProfile from "../components/Groups/GroupsOnProfile.vue";
 import UpdateUserForm from "../components/Setting/UpdateUserForm.vue";
 
 const { currentUsername } = storeToRefs(useUserStore());
@@ -24,5 +25,6 @@ async function delete_() {
     <button class="pure-button pure-button-primary" @click="logout">Logout</button>
     <button class="button-error pure-button" @click="delete_">Delete User</button>
     <UpdateUserForm />
+    <GroupsOnProfile />
   </main>
 </template>
