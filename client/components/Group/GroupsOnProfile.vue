@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import Search from "../Search/Search.vue";
+
+const groupNames = ["Group1", "Group2", "Group3"];
 </script>
 
 <template>
@@ -9,7 +11,12 @@ import Search from "../Search/Search.vue";
         <h1>my groups</h1>
         <Search :inputWidth="'200px'" />
       </div>
-      <div class="group-container"></div>
+      <div v-for="groupName in groupNames" class="groups-container">
+        <div class="group-container">
+          <img src="@/assets/images/logo.png" class="group-picture" @dragstart="(e) => e.preventDefault()" />
+          <h2>{{ groupName }}</h2>
+        </div>
+      </div>
     </div>
   </main>
 </template>
@@ -18,6 +25,26 @@ import Search from "../Search/Search.vue";
 .container {
   display: flex;
   flex-direction: column;
+}
+
+.group-picture {
+  width: 50px;
+  height: 50px;
+  background-color: white;
+  padding: 10px;
+  border-radius: 50%;
+}
+
+.group-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 20px;
+  padding: 10px;
+  background-color: var(--light-gray);
+  margin-bottom: 20px;
+  border-radius: 20px;
+  box-sizing: border-box;
 }
 
 .top-row {
@@ -29,10 +56,12 @@ import Search from "../Search/Search.vue";
   width: 100%;
 }
 
-.group-container {
+.groups-container {
   display: flex;
   flex-direction: column;
   background-color: var(--gray);
-  min-height: 200px;
+  padding-top: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 </style>

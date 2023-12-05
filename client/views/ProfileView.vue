@@ -2,7 +2,7 @@
 import router from "@/router";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
-import GroupsOnProfile from "../components/Groups/GroupsOnProfile.vue";
+import GroupsOnProfile from "../components/Group/GroupsOnProfile.vue";
 import UpdateUserForm from "../components/Setting/UpdateUserForm.vue";
 
 const { currentUsername } = storeToRefs(useUserStore());
