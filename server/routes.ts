@@ -60,17 +60,17 @@ class Routes {
     return { msg: "Logged out!" };
   }
 
-  @Router.get("/store")
-  async getStore(session: WebSessionDoc) {
-    const user = WebSession.getUser(session);
-    const { _id, storeOwner, items } = await Store.getStoreByOwner(user);
+  // @Router.get("/store")
+  // async getStore(session: WebSessionDoc) {
+  //   const user = WebSession.getUser(session);
+  //   const { _id, storeOwner, items } = await Store.getStoreByOwner(user);
 
-    // TODO get the ClothingItem objects from the ClothingItemConcept using `items`.
-    // For now we'll just return a set of the ObjectIds of the ClothingItems.
-    const clothingItems = items;
+  //   // TODO get the ClothingItem objects from the ClothingItemConcept using `items`.
+  //   // For now we'll just return a set of the ObjectIds of the ClothingItems.
+  //   const clothingItems = items;
 
-    return { _id, storeOwner, items: clothingItems };
-  }
+  //   return { _id, storeOwner, items: clothingItems };
+  // }
 
   @Router.patch("/store/add/:itemId")
   async addItemToStore(session: WebSessionDoc, itemId: ObjectId) {
@@ -176,6 +176,22 @@ class Routes {
       clothingItems = await ClothingItem.getAllClothingItems({});
     }
     return Responses.clothingItems(clothingItems);
+  }
+
+  @Router.get("/store/:owner")
+  async getStore(owner: string) {
+    const id = (await User.getUserByUsername(owner))._id;
+    const clothingItems = await ClothingItem.getClothingItems(id);
+
+    return Responses.clothingItems(clothingItems);
+  }
+
+  @Router.get("/borrowed/:borrower")
+  async getBorrowedItems(borrower: string) {
+    const id = (await User.getUserByUsername(borrower))._id;
+    const borrowedItems = await ClothingItem.getBorrowedItems(id);
+
+    return Responses.clothingItems(borrowedItems);
   }
 
   @Router.post("/clothingItems")
