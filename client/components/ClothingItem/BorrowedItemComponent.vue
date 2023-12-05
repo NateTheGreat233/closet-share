@@ -19,7 +19,7 @@ const onViewContractClick = () => {};
   <main>
     <div class="container">
       <div class="image-container">
-        <img :src="imageUrl" />
+        <img :src="imageUrl" @dragstart="(e) => e.preventDefault()" />
       </div>
       <div class="description-container">
         <div class="info-column">

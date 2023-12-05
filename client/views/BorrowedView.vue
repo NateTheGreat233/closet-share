@@ -33,7 +33,7 @@ onBeforeMount(async () => {
       <div class="top-row">
         <h1>currently borrowing</h1>
         <div class="history-button-container">
-          <img src="@/assets/images/book.png" />
+          <img src="@/assets/images/book.png" @dragstart="(e) => e.preventDefault()" />
           <h2>HISTORY</h2>
         </div>
       </div>
