@@ -5,6 +5,9 @@
   --base-bg: #f1f3f5;
   --beige: #f4edde;
   --maroon: #411d2a;
+  --light-gray: #f3f1ee;
+  --gray: #d9d9d9;
+  --gray-hover: #d3d3d3;
 }
 
 /* make all text be the maroon color */
