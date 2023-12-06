@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 
 import { Router, getExpressRouter } from "./framework/router";
 
-import { ClothingItem, Friend, Post, Store, User, WebSession } from "./app";
+import { ClothingItem, Friend, Group, Post, Store, User, WebSession } from "./app";
 import { ClothingItemDoc } from "./concepts/clothingitem";
 import { PostDoc, PostOptions } from "./concepts/post";
 import { UserDoc } from "./concepts/user";
@@ -224,6 +224,84 @@ class Routes {
   @Router.patch("/return/clothingItems/:_id")
   async returnClothingItem(_id: ObjectId) {
     return await ClothingItem.returnClothingItem(_id);
+  }
+
+  @Router.post("/groups")
+  async createGroup(session: WebSessionDoc, name: string, members?: Array<ObjectId>) {
+    const user = WebSession.getUser(session);
+    return await Group.createGroup(user, name, members);
+  }
+
+  @Router.patch("/groups/:_id")
+  async updateGroup(session: WebSessionDoc, _id: ObjectId, name: string) {
+    const user = WebSession.getUser(session);
+    return await Group.updateName(user, _id, name);
+  }
+
+  @Router.delete("/groups/:_id")
+  async deleteGroup(session: WebSessionDoc, _id: ObjectId) {
+    const user = WebSession.getUser(session);
+    return await Group.deleteGroup(user, _id);
+  }
+
+  @Router.get("/groups")
+  async getGroups() {
+    return await Group.getGroups();
+  }
+
+  @Router.get("/groups/:name")
+  async getGroupByName(name: string) {
+    return await Group.getGroups(name);
+  }
+
+  @Router.get("/groups/user/:_id")
+  async getGroupsOfUser(_id: ObjectId) {
+    return await Group.getGroupsByMember(_id);
+  }
+
+  @Router.get("/groups/user/:_id/requests")
+  async getRequestsByUser(_id: ObjectId) {
+    return await Group.getRequestsByUser(_id);
+  }
+
+  @Router.get("/group/:_id")
+  async getGroupInfoById(_id: ObjectId) {
+    return await Group.getGroupById(_id);
+  }
+
+  @Router.delete("/group/:_id")
+  async removeMember(session: WebSessionDoc, _id: ObjectId, userId: ObjectId) {
+    const modifier = WebSession.getUser(session);
+    return await Group.removeMember(modifier, _id, userId);
+  }
+
+  @Router.get("/group/:_id/requests")
+  async getRequestsByGroup(_id: ObjectId) {
+    return await Group.getRequestsByGroup(_id);
+  }
+
+  @Router.post("/group/:_id")
+  async sendGroupRequest(session: WebSessionDoc, _id: ObjectId, userId: ObjectId) {
+    const creator = WebSession.getUser(session);
+    return await Group.sendRequest(creator, userId, _id);
+  }
+
+  @Router.delete("/group/requests/:_id")
+  async removeGroupRequest(userId: ObjectId, _id: ObjectId) {
+    // should only be accessible by users in the group or user associated with the request
+    return await Group.removeRequest(userId, _id);
+  }
+
+  @Router.put("/group/accept")
+  async acceptGroupRequest(session: WebSessionDoc, userId: ObjectId, groupId: ObjectId) {
+    const modifier = WebSession.getUser(session);
+    return await Group.acceptRequest(modifier, userId, groupId);
+  }
+
+  @Router.put("/group/reject")
+  async rejectGroupRequest(session: WebSessionDoc, userId: ObjectId, groupId: ObjectId) {
+    const modifier = WebSession.getUser(session);
+    return await Group.rejectRequest(modifier, userId, groupId);
   }
 }
 
