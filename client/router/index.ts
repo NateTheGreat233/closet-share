@@ -7,6 +7,7 @@ import DashboardView from "../views/DashboardView.vue";
 import LoginView from "../views/LoginView.vue";
 import NotFoundView from "../views/NotFoundView.vue";
 import ProfileView from "../views/ProfileView.vue";
+import SettingsView from "../views/SettingsView.vue";
 import StoreView from "../views/StoreView.vue";
 
 const router = createRouter({
@@ -46,6 +47,12 @@ const router = createRouter({
       path: "/closet/:username",
       name: "Closet",
       component: StoreView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/settings/:username",
+      name: "Settings",
+      component: SettingsView,
       meta: { requiresAuth: true },
     },
     {
