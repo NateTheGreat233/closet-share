@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from "vue";
 import { fetchy } from "../../utils/fetchy";
+import { storeToRefs } from "pinia";
+import { useUserStore } from "@/stores/user";
 import ClothingItemComponent from "@/components/ClothingItem/ClothingItemComponent.vue";
 import EditClothingItemForm from "@/components/ClothingItem/EditClothingItemForm.vue";
 import CreateClothingItemForm from "@/components/ClothingItem/CreateClothingItemForm.vue";
@@ -63,6 +65,9 @@ p,
 .row {
   margin: 0 auto;
   max-width: 60em;
+}
+.clothingItems {
+  margin-top: 50px;
 }
 
 article {
