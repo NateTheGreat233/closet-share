@@ -37,3 +37,36 @@ export const useClothingItemStore = defineStore(
   },
   { persist: true },
 );
+
+export const useBorrowedClothingItemStore = defineStore(
+  "borrowedClothingItem",
+  () => {
+    const allBorrowedClothingItems = ref<Array<ClothingItem>>();
+
+    const getBorrowedClothingItems = async (borrower: string) => {
+      try {
+        const response = await fetchy(`/api/borrowedItems/${borrower}`, "GET");
+        console.log("response is " + response);
+        allBorrowedClothingItems.value = response;
+        console.log(allBorrowedClothingItems.value);
+        //return response;
+      } catch (_) {}
+    };
+
+    const onSignIn = async (borrower: string) => {
+      await getBorrowedClothingItems(borrower);
+    };
+
+    const resetStore = () => {
+      allBorrowedClothingItems.value = undefined;
+    };
+
+    return {
+      allBorrowedClothingItems,
+      getBorrowedClothingItems,
+      onSignIn,
+      resetStore,
+    };
+  },
+  { persist: true },
+);

@@ -18,17 +18,33 @@ const deleteClothingItem = async () => {
   emit("refreshClothingItems");
 };
 
+const borrowClothingItem = async () => {
+  try {
+    await fetchy(`/api/borrow/clothingItems/${props.clothingItem._id}`, "PATCH", {});
+  } catch (e) {
+    console.error("Error:", e);
+    return;
+  }
+  emit("refreshClothingItems");
+};
+
 console.log(props.clothingItem);
 console.log(props.clothingItem.owner);
 console.log(props.clothingItem.name);
 console.log(props.clothingItem.description);
 console.log(props.clothingItem.imageUrl);
+
+console.log("username is " + currentUsername.value);
 </script>
 
 <template>
   <p class="author">{{ props.clothingItem.owner }}</p>
   <p class="name">{{ props.clothingItem.name }}</p>
   <p class="description">{{ props.clothingItem.description }}</p>
+  <menu v-if="props.clothingItem.owner !== currentUsername">
+    <li><button class="btn-small pure-button brown" @click="borrowClothingItem">Borrow</button></li>
+    <!-- <li><button class="btn-small pure-button green" @click="deleteClothingItem">Return</button></li> -->
+  </menu>
   <img :src="props.clothingItem.imageUrl" alt="photo" />
   <div class="base">
     <menu v-if="props.clothingItem.owner == currentUsername">
@@ -76,5 +92,21 @@ menu {
 
 .base article:only-child {
   margin-left: auto;
+}
+
+img {
+  max-width: 100%; /* Ensure the image doesn't exceed its container */
+  height: auto; /* Maintain aspect ratio */
+  border: 1px solid #ccc; /* Optional border for images */
+}
+
+.brown {
+  background-color: #735751; /* Brown color for Borrow button */
+  color: white; /* Text color for Borrow button */
+}
+
+.green {
+  background-color: #a5a58d; /* Green color for Return button */
+  color: white; /* Text color for Return button */
 }
 </style>

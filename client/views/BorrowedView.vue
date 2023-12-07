@@ -1,24 +1,38 @@
 <script setup lang="ts">
 import Search from "@/components/Search/Search.vue";
+import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
-import { onBeforeMount } from "vue";
+import { onMounted, ref } from "vue";
 import BorrowedItemComponent from "../components/ClothingItem/BorrowedItemComponent.vue";
-import { useClothingItemStore } from "../stores/clothingItem";
+import { useBorrowedClothingItemStore, useClothingItemStore } from "../stores/clothingItem";
 
 const { allClothingItems } = storeToRefs(useClothingItemStore());
 const { getAllClothingItems } = useClothingItemStore();
+const { allBorrowedClothingItems } = storeToRefs(useBorrowedClothingItemStore());
+const { getBorrowedClothingItems } = useBorrowedClothingItemStore();
+const { currentUsername } = storeToRefs(useUserStore());
 
-onBeforeMount(async () => {
-  // only if we haven't pre-populated the data, we'll fetch again
-  if (allClothingItems.value === undefined) {
-    await getAllClothingItems();
-  }
+const isDataLoaded = ref(false);
+
+// onBeforeMount(async () => {
+//   // only if we haven't pre-populated the data, we'll fetch again
+//   console.log("Fetching borrowed items...");
+//   if (allBorrowedClothingItems.value == undefined) {
+//     await getBorrowedClothingItems(currentUsername.value);
+//     isDataLoaded.value = true;
+//   }
+// });
+onMounted(async () => {
+  console.log("Fetching borrowed items...");
+  await getBorrowedClothingItems(currentUsername.value);
 });
+console.log(currentUsername.value);
+console.log(allBorrowedClothingItems.value);
 </script>
 
 <template>
   <main>
-    <div class="container">
+    <div v-if="allBorrowedClothingItems && allBorrowedClothingItems.length" class="container">
       <Search />
       <div class="top-row">
         <h1>currently borrowing</h1>
@@ -28,7 +42,8 @@ onBeforeMount(async () => {
         </div>
       </div>
       <div class="listing-wrapper">
-        <div v-for="item in allClothingItems" class="listing-container">
+        <!-- <div v-for="item in allBorrowedClothingItems" class="listing-container"> -->
+        <div v-for="(item, index) in allBorrowedClothingItems" :key="index" class="listing-container">
           <BorrowedItemComponent :owner="item.owner" :name="item.name" :description="item.description" :imageUrl="item.imageUrl" />
         </div>
       </div>

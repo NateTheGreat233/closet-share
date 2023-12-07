@@ -187,7 +187,7 @@ class Routes {
     return Responses.clothingItems(clothingItems);
   }
 
-  @Router.get("/borrowed/:borrower")
+  @Router.get("/borrowedItems/:borrower")
   async getBorrowedItems(borrower: string) {
     const id = (await User.getUserByUsername(borrower))._id;
     const borrowedItems = await ClothingItem.getBorrowedItems(id);
@@ -219,7 +219,6 @@ class Routes {
   @Router.patch("/borrow/clothingItems/:_id")
   async borrow(session: WebSessionDoc, _id: ObjectId) {
     const user = WebSession.getUser(session);
-    await ClothingItem.isBorrower(user, _id);
     return await ClothingItem.borrow(_id, user);
   }
 
