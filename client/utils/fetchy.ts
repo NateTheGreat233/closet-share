@@ -1,7 +1,7 @@
 import { useToastStore } from "../stores/toast";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
-export type BodyT = string | number | boolean | null | BodyT[] | { [key: string]: BodyT };
+export type BodyT = string | number | boolean | null | Date | BodyT[] | { [key: string]: BodyT };
 
 /**
  * A wrapper around fetch that handles errors and alerts the messages to the user.

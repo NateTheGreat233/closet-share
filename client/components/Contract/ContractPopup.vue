@@ -9,7 +9,7 @@ const { visible, imageUrl, title, owner, notes } = defineProps({
   notes: String,
 });
 
-const emit = defineEmits(["onClose"]);
+const emit = defineEmits(["onClose", "onBorrow"]);
 
 const borrowDate = ref<string>();
 const returnDate = ref<string>();
@@ -25,6 +25,13 @@ watchEffect(() => {
   maxBorrowDate.value = returnDate.value ? new Date(returnDate.value).toISOString().split("T")[0] : undefined;
   minReturnDate.value = (borrowDate.value ? new Date(borrowDate.value) : new Date()).toISOString().split("T")[0];
 });
+
+const onBorrow = () => {
+  if (borrowDate.value && returnDate.value) {
+    emit("onClose");
+    emit("onBorrow", { borrowDate: new Date(borrowDate.value), returnDate: new Date(returnDate.value) });
+  }
+};
 </script>
 
 <template>
@@ -52,7 +59,7 @@ watchEffect(() => {
                 <input type="date" :min="minReturnDate" v-model="returnDate" />
               </div>
             </div>
-            <div class="button-container">
+            <div class="button-container" @click="onBorrow">
               <h2 class="button-text">borrow</h2>
             </div>
           </div>
@@ -105,6 +112,7 @@ h1,
 h2,
 h3 {
   margin: 0px;
+  padding: 0px;
 }
 
 .details-container {
