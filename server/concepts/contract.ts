@@ -150,7 +150,7 @@ export default class ContractConcept {
 
     if (!contract?.finalized) {
       this.sanitizeUpdate(update);
-      await this.contracts.updateOne({ contractId }, update);
+      await this.contracts.updateOne({ _id: contractId }, update);
       return { msg: "Contract successfully updated!" };
     } else {
       return { msg: "Cannot modify a finalized contract!" };
