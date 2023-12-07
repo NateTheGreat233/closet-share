@@ -43,7 +43,7 @@ console.log(allBorrowedClothingItems.value);
       <div class="listing-wrapper">
         <!-- <div v-for="item in allBorrowedClothingItems" class="listing-container"> -->
         <div v-for="(item, index) in allBorrowedClothingItems" :key="index" class="listing-container">
-          <BorrowedItemComponent :owner="item.owner" :name="item.name" :description="item.description" :imageUrl="item.imageUrl" />
+          <BorrowedItemComponent :itemId="item._id" :owner="item.owner" :name="item.name" :description="item.description" :imageUrl="item.imageUrl" />
         </div>
       </div>
     </div>

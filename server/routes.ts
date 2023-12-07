@@ -257,7 +257,7 @@ class Routes {
     return Responses.contracts(contracts);
   }
 
-  @Router.get("/contracts/:item")
+  @Router.get("/contracts/fromItem/:item")
   async getContractByItem(item: ObjectId) {
     const contract = await Contract.getContractByItem(item);
 

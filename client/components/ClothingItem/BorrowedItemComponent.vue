@@ -1,18 +1,33 @@
 <script setup lang="ts">
-import { defineProps } from "vue";
+import { defineProps, onBeforeMount, ref } from "vue";
+import { fetchy } from "../../utils/fetchy";
+import ViewContractPopup from "../Contract/ViewContractPopup.vue";
 
-const { owner, name, description, imageUrl } = defineProps({
+const { owner, name, description, imageUrl, itemId } = defineProps({
   owner: String,
   name: String,
   description: String,
   imageUrl: String,
+  itemId: String,
 });
+
+const contract = ref<any>();
+const showContractDetails = ref<boolean>(false);
 
 const onReturnClick = () => {};
 
-const onContactOwnerClick = () => {};
+const onViewContractClick = async () => {
+  showContractDetails.value = true;
+};
 
-const onViewContractClick = () => {};
+onBeforeMount(async () => {
+  contract.value = await fetchy(`/api/contracts/fromItem/${itemId}`, "GET");
+  console.log(contract.value);
+});
+
+const onClose = () => {
+  showContractDetails.value = false;
+};
 </script>
 
 <template>
@@ -35,15 +50,13 @@ const onViewContractClick = () => {};
           <div class="button-container">
             <h2 class="button-text">I have returned this item</h2>
           </div>
-          <div class="button-container">
-            <h2 class="button-text">contact owner</h2>
-          </div>
-          <div class="button-container">
+          <div class="button-container" @click="onViewContractClick">
             <h2 class="button-text">view contract details</h2>
           </div>
         </div>
       </div>
     </div>
+    <ViewContractPopup @onClose="onClose" :visible="showContractDetails" :borrowDate="contract?.borrowDate" :returnDate="contract?.returnDate" />
   </main>
 </template>
 
