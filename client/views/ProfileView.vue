@@ -1,22 +1,44 @@
 <script setup lang="ts">
+import { useUserStore } from "@/stores/user";
+import { storeToRefs } from "pinia";
+import { onMounted, ref } from "vue";
+import { useRoute } from "vue-router";
+import ClosetListComponent from "../components/Closet/ClosetListComponent.vue";
 import GroupsOnProfile from "../components/Group/GroupsOnProfile.vue";
-import ReviewsOnProfile from "../components/Review/ReviewsOnProfile.vue";
-import StoreListComponent from "../components/Store/StoreListComponent.vue";
-import { useUserStore } from "../stores/user";
+import router from "../router";
 
-const { currentUsername } = useUserStore();
+const route = useRoute();
+const username = ref("");
+const DEFAULT_PHOTO = "/client/assets/images/blankProfile.png";
+onMounted(async () => {
+  username.value = route.params.username as string;
+});
+const { currentProfilePhoto, currentUsername, isLoggedIn } = storeToRefs(useUserStore());
+async function goToSettings() {
+  await router.push({ name: "Settings", params: { username: currentUsername.value } });
+}
 </script>
 
 <template>
+  <section>
+    <h1 v-if="isLoggedIn && username == currentUsername">
+      <button class="settings-button" @click="goToSettings"><img class="settings-image" src="@/assets/images/settings.png" /></button>
+    </h1>
+  </section>
   <main class="column">
     <div>
+      <h1>{{ currentUsername }}'s Profile</h1>
+      <img v-if="currentProfilePhoto" class="photo" :src="currentProfilePhoto" alt="photo" />
+      <img v-else class="photo" :src="DEFAULT_PHOTO" alt="photo" />
+    </div>
+    <div>
       <h1>My Closet</h1>
-      <StoreListComponent :username="currentUsername" />
+      <ClosetListComponent />
     </div>
     <div class="two-columns">
-      <div class="column">
+      <!-- <div class="column">
         <ReviewsOnProfile />
-      </div>
+      </div> -->
       <div class="column">
         <GroupsOnProfile />
       </div>
@@ -25,11 +47,26 @@ const { currentUsername } = useUserStore();
 </template>
 
 <style>
+.photo {
+  width: 150px;
+  display: flex;
+}
+
 .two-columns {
   display: flex;
   gap: 20px;
 }
 .column {
   flex: 1;
+}
+
+.settings-image {
+  height: 1em;
+  display: flex;
+  justify-content: center;
+  align-self: center;
+}
+.settings-button {
+  margin-left: 80%;
 }
 </style>

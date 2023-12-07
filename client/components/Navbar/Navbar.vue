@@ -16,14 +16,15 @@ const links = ref<Map<string, string>>(
     ["dashboard", "Dashboard"],
     ["borrowed", "Borrowed"],
     ["closet", "Closet"],
+    ["groups", "Groups"],
     ["profile", "Profile"],
-    ["settings", "Settings"],
+    // ["settings", "Settings"],
   ]),
 );
 
-const onLinkClick = (linkName: string): void => {
+const onLinkClick = async (linkName: string): Promise<void> => {
   console.log(linkName);
-  router.push({ name: linkName, params: { username: currentUsername.value } });
+  await router.push({ name: linkName, params: { username: currentUsername.value } });
 };
 </script>
 
