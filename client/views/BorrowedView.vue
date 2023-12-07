@@ -3,6 +3,7 @@ import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { onMounted, ref } from "vue";
 import BorrowedItemComponent from "../components/ClothingItem/BorrowedItemComponent.vue";
+import router from "../router";
 import { useBorrowedClothingItemStore, useClothingItemStore } from "../stores/clothingItem";
 
 const { allClothingItems } = storeToRefs(useClothingItemStore());
@@ -22,11 +23,12 @@ const isDataLoaded = ref(false);
 //   }
 // });
 onMounted(async () => {
-  console.log("Fetching borrowed items...");
   await getBorrowedClothingItems(currentUsername.value);
 });
-console.log(currentUsername.value);
-console.log(allBorrowedClothingItems.value);
+
+const onClickBorrow = async () => {
+  await router.push({ name: "Dashboard", params: { username: currentUsername.value } });
+};
 </script>
 
 <template>
@@ -41,10 +43,15 @@ console.log(allBorrowedClothingItems.value);
         </div> -->
       </div>
       <div class="listing-wrapper">
-        <!-- <div v-for="item in allBorrowedClothingItems" class="listing-container"> -->
         <div v-for="(item, index) in allBorrowedClothingItems" :key="index" class="listing-container">
           <BorrowedItemComponent :itemId="item._id" :owner="item.owner" :name="item.name" :description="item.description" :imageUrl="item.imageUrl" />
         </div>
+      </div>
+    </div>
+    <div v-else class="blank-container">
+      <h1>looks like you haven't borrowed anything yet</h1>
+      <div class="button-container" @click="onClickBorrow">
+        <h2 class="button-text">borrow something!</h2>
       </div>
     </div>
   </main>
@@ -55,6 +62,38 @@ console.log(allBorrowedClothingItems.value);
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding-left: 100px;
+  padding-right: 100px;
+}
+
+.button-text {
+  margin: 0px;
+}
+
+.button-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  padding-left: 50px;
+  padding-right: 50px;
+  background-color: var(--gray);
+  border-radius: 10px;
+}
+
+.button-container:hover {
+  background-color: var(--gray-hover);
+  cursor: pointer;
+}
+
+.blank-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   height: 100%;
   box-sizing: border-box;
