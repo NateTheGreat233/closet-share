@@ -2,8 +2,9 @@ import { ObjectId } from "mongodb";
 
 import { Router, getExpressRouter } from "./framework/router";
 
-import { ClothingItem, Friend, Post, Store, User, WebSession } from "./app";
+import { ClothingItem, Contract, Friend, Group, Post, Store, User, WebSession } from "./app";
 import { ClothingItemDoc } from "./concepts/clothingitem";
+import { ContractDoc } from "./concepts/contract";
 import { PostDoc, PostOptions } from "./concepts/post";
 import { UserDoc } from "./concepts/user";
 import { WebSessionDoc } from "./concepts/websession";
@@ -218,12 +219,160 @@ class Routes {
   @Router.patch("/borrow/clothingItems/:_id")
   async borrow(session: WebSessionDoc, _id: ObjectId) {
     const user = WebSession.getUser(session);
+    await ClothingItem.isBorrower(user, _id);
     return await ClothingItem.borrow(_id, user);
   }
 
   @Router.patch("/return/clothingItems/:_id")
-  async returnClothingItem(_id: ObjectId) {
+  async returnClothingItem(session: WebSessionDoc, _id: ObjectId) {
+    const user = WebSession.getUser(session);
+    await ClothingItem.isBorrower(user, _id);
     return await ClothingItem.returnClothingItem(_id);
+  }
+
+  @Router.get("/contracts/:user")
+  async getContracts(user?: string) {
+    let contracts;
+    if (user) {
+      const id = (await User.getUserByUsername(user))._id;
+      contracts = await Contract.getAllUserContracts(id);
+    } else {
+      contracts = await Contract.getContracts({});
+    }
+    return Responses.contracts(contracts);
+  }
+
+  @Router.get("/contracts/borrower/:borrower")
+  async getBorrowerContracts(borrower: string) {
+    const id = (await User.getUserByUsername(borrower))._id;
+    const contracts = await Contract.getContractsByBorrower(id);
+
+    return Responses.contracts(contracts);
+  }
+
+  @Router.get("/contracts/owner/:owner")
+  async getOwnerContracts(owner: string) {
+    const id = (await User.getUserByUsername(owner))._id;
+    const contracts = await Contract.getContractsByOwner(id);
+
+    return Responses.contracts(contracts);
+  }
+
+  @Router.get("/contracts/:item")
+  async getContractByItem(item: ObjectId) {
+    const contract = await Contract.getContractByItem(item);
+
+    return Responses.contract(contract);
+  }
+
+  @Router.post("/contracts")
+  async proposeContract(session: WebSessionDoc, item: ObjectId, borrowDate: Date, returnDate: Date, notes: string) {
+    // Borrower will propose the contract (user that's logged in)
+    const borrower = await WebSession.getUser(session);
+
+    const owner = await ClothingItem.getOwner(item);
+    const created = await Contract.propose(owner, borrower, item, borrowDate, returnDate, notes);
+    return { msg: created.msg, contract: await Responses.contract(created.contract) };
+  }
+
+  @Router.patch("/contracts/:_id")
+  async modifyContract(session: WebSessionDoc, _id: ObjectId, update: Partial<ContractDoc>) {
+    const user = WebSession.getUser(session);
+    await Contract.isInvolved(user, _id);
+
+    return await Contract.modify(_id, update);
+  }
+
+  @Router.patch("/contracts/finalize/:_id")
+  async finalizeContract(session: WebSessionDoc, _id: ObjectId) {
+    const user = WebSession.getUser(session);
+    await Contract.isInvolved(user, _id);
+    return await Contract.finalize(_id);
+  }
+
+  @Router.delete("/contracts/:_id")
+  async deleteContract(session: WebSessionDoc, _id: ObjectId) {
+    const user = WebSession.getUser(session);
+    await Contract.isInvolved(user, _id);
+    return await Contract.remove(_id);
+  }
+
+  @Router.post("/groups")
+  async createGroup(session: WebSessionDoc, name: string, members?: Array<ObjectId>) {
+    const user = WebSession.getUser(session);
+    return await Group.createGroup(user, name, members);
+  }
+
+  @Router.patch("/groups/:_id")
+  async updateGroup(session: WebSessionDoc, _id: ObjectId, name: string) {
+    const user = WebSession.getUser(session);
+    return await Group.updateName(user, _id, name);
+  }
+
+  @Router.delete("/groups/:_id")
+  async deleteGroup(session: WebSessionDoc, _id: ObjectId) {
+    const user = WebSession.getUser(session);
+    return await Group.deleteGroup(user, _id);
+  }
+
+  @Router.get("/groups")
+  async getGroups() {
+    return await Group.getGroups();
+  }
+
+  @Router.get("/groups/:name")
+  async getGroupByName(name: string) {
+    return await Group.getGroups(name);
+  }
+
+  @Router.get("/groups/user/:_id")
+  async getGroupsOfUser(_id: ObjectId) {
+    return await Group.getGroupsByMember(_id);
+  }
+
+  @Router.get("/groups/user/:_id/requests")
+  async getRequestsByUser(_id: ObjectId) {
+    return await Group.getRequestsByUser(_id);
+  }
+
+  @Router.get("/group/:_id")
+  async getGroupInfoById(_id: ObjectId) {
+    return await Group.getGroupById(_id);
+  }
+
+  @Router.delete("/group/:_id")
+  async removeMember(session: WebSessionDoc, _id: ObjectId, userId: ObjectId) {
+    const modifier = WebSession.getUser(session);
+    return await Group.removeMember(modifier, _id, userId);
+  }
+
+  @Router.get("/group/:_id/requests")
+  async getRequestsByGroup(_id: ObjectId) {
+    return await Group.getRequestsByGroup(_id);
+  }
+
+  @Router.post("/group/:_id")
+  async sendGroupRequest(session: WebSessionDoc, _id: ObjectId, userId: ObjectId) {
+    const creator = WebSession.getUser(session);
+    return await Group.sendRequest(creator, userId, _id);
+  }
+
+  @Router.delete("/group/requests/:_id")
+  async removeGroupRequest(userId: ObjectId, _id: ObjectId) {
+    // should only be accessible by users in the group or user associated with the request
+    return await Group.removeRequest(userId, _id);
+  }
+
+  @Router.put("/group/accept")
+  async acceptGroupRequest(session: WebSessionDoc, userId: ObjectId, groupId: ObjectId) {
+    const modifier = WebSession.getUser(session);
+    return await Group.acceptRequest(modifier, userId, groupId);
+  }
+
+  @Router.put("/group/reject")
+  async rejectGroupRequest(session: WebSessionDoc, userId: ObjectId, groupId: ObjectId) {
+    const modifier = WebSession.getUser(session);
+    return await Group.rejectRequest(modifier, userId, groupId);
   }
 }
 

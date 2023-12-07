@@ -3,8 +3,8 @@ import DocCollection, { BaseDoc } from "../framework/doc";
 import { NotAllowedError, NotFoundError } from "./errors";
 
 export interface ClothingItemDoc extends BaseDoc {
-  name: String;
-  description: String;
+  name: string;
+  description: string;
   owner: ObjectId;
   borrower: ObjectId;
   imageUrl: string;
@@ -39,6 +39,20 @@ export default class ClothingItemConcept {
       },
     );
     return clothingItems;
+  }
+
+  /**
+   * Get the owner of the clothing item
+   * @param item the id of the clothing item
+   */
+  async getOwner(item: ObjectId) {
+    const clothingItem = await this.getClothingItemById(item);
+
+    if (clothingItem) {
+      return clothingItem.owner;
+    } else {
+      throw new NotFoundError(`Clothing item ${item} does not exist!`);
+    }
   }
 
   /**
@@ -93,6 +107,7 @@ export default class ClothingItemConcept {
   async borrow(item: ObjectId, borrower: ObjectId) {
     // To represent someone borrowing the item, should just update the borrower field
     await this.update(item, { borrower });
+    return { msg: "Clothing item successfully borrowed!" };
   }
 
   /**
@@ -102,6 +117,7 @@ export default class ClothingItemConcept {
   async returnClothingItem(item: ObjectId) {
     // To represent someone removing the item, should just clear the borrower field
     await this.update(item, { borrower: undefined });
+    return { msg: "Clothing item successfully returned!" };
   }
 
   /**
@@ -155,6 +171,21 @@ export default class ClothingItemConcept {
     }
   }
 
+  /**
+   * Checks if the given user is the borrower of the given clothing item
+   * @param user the given user
+   * @param _id the id of the clothing item
+   */
+  async isBorrower(user: ObjectId, _id: ObjectId) {
+    const clothingItem = await this.clothingItems.readOne({ _id });
+    if (!clothingItem) {
+      throw new NotFoundError(`Clothing item ${_id} does not exist!`);
+    }
+    if (clothingItem.borrower.toString() !== user.toString()) {
+      throw new ClothingItemBorrowerNotMatchError(user, _id);
+    }
+  }
+
   private sanitizeUpdate(update: Partial<ClothingItemDoc>) {
     // Make sure the update cannot change the owner.
     const allowedUpdates = ["name", "description", "borrower", "imageUrl"];
@@ -172,5 +203,13 @@ export class ClothingItemOwnerNotMatchError extends NotAllowedError {
     public readonly _id: ObjectId,
   ) {
     super("{0} is not the owner of clothing item {1}!", owner, _id);
+  }
+}
+export class ClothingItemBorrowerNotMatchError extends NotAllowedError {
+  constructor(
+    public readonly borrower: ObjectId,
+    public readonly _id: ObjectId,
+  ) {
+    super("{0} is not the borrower of clothing item {1}!", borrower, _id);
   }
 }

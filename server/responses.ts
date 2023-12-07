@@ -1,5 +1,6 @@
 import { User } from "./app";
 import { ClothingItemDoc } from "./concepts/clothingitem";
+import { ContractDoc } from "./concepts/contract";
 import { AlreadyFriendsError, FriendNotFoundError, FriendRequestAlreadyExistsError, FriendRequestDoc, FriendRequestNotFoundError } from "./concepts/friend";
 import { PostAuthorNotMatchError, PostDoc } from "./concepts/post";
 import { Router } from "./framework/router";
@@ -45,6 +46,28 @@ export default class Responses {
   static async clothingItems(clothingItems: ClothingItemDoc[]) {
     const owners = await User.idsToUsernames(clothingItems.map((clothingItem) => clothingItem.owner));
     return clothingItems.map((clothingItem, i) => ({ ...clothingItem, owner: owners[i] }));
+  }
+
+  /**
+   * Convert ContractDoc into more readable format for the frontend.
+   */
+  static async contract(contract: ContractDoc | null) {
+    if (!contract) {
+      return contract;
+    }
+    const borrower = await User.getUserById(contract.borrower);
+    const owner = await User.getUserById(contract.owner);
+    return { ...contract, owner: owner.username, borrower: borrower.username };
+  }
+
+  /**
+   * Same as {@link contract} but for an array of ContractDoc for improved performance.
+   */
+  static async contracts(contracts: ContractDoc[]) {
+    const owners = await User.idsToUsernames(contracts.map((contract) => contract.owner));
+    const borrowers = await User.idsToUsernames(contracts.map((contract) => contract.borrower));
+
+    return contracts.map((contract, i) => ({ ...contract, owner: owners[i], borrower: borrowers[i] }));
   }
 
   /**
