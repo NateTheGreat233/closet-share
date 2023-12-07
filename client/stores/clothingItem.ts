@@ -46,10 +46,10 @@ export const useBorrowedClothingItemStore = defineStore(
     const getBorrowedClothingItems = async (borrower: string) => {
       try {
         const response = await fetchy(`/api/borrowedItems/${borrower}`, "GET");
-        console.log(response);
-        // allBorrowedClothingItems.value = response;
-        // console.log(allBorrowedClothingItems);
-        return response;
+        console.log("response is " + response);
+        allBorrowedClothingItems.value = response;
+        console.log(allBorrowedClothingItems.value);
+        //return response;
       } catch (_) {}
     };
 

@@ -41,7 +41,7 @@ console.log("username is " + currentUsername.value);
   <p class="author">{{ props.clothingItem.owner }}</p>
   <p class="name">{{ props.clothingItem.name }}</p>
   <p class="description">{{ props.clothingItem.description }}</p>
-  <menu>
+  <menu v-if="props.clothingItem.owner !== currentUsername">
     <li><button class="btn-small pure-button brown" @click="borrowClothingItem">Borrow</button></li>
     <!-- <li><button class="btn-small pure-button green" @click="deleteClothingItem">Return</button></li> -->
   </menu>
