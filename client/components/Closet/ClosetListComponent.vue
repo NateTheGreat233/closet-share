@@ -25,7 +25,11 @@ onBeforeMount(async () => {
 
 <template>
   <h2>Store Items:</h2>
-  {{ store.closet }}
+  <section class="clothingItems" v-if="loaded && store.length !== 0">
+    <article v-for="clothingItem in store" :key="clothingItem._id">
+      {{ clothingItem }}
+    </article>
+  </section>
 </template>
 
 <style scoped>
