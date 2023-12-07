@@ -1,4 +1,5 @@
 import ClothingItemConcept from "./concepts/clothingitem";
+import ContractConcept from "./concepts/contract";
 import FriendConcept from "./concepts/friend";
 import GroupConcept from "./concepts/group";
 import PostConcept from "./concepts/post";
@@ -13,4 +14,5 @@ export const Post = new PostConcept();
 export const Friend = new FriendConcept();
 export const Store = new StoreConcept();
 export const ClothingItem = new ClothingItemConcept();
+export const Contract = new ContractConcept();
 export const Group = new GroupConcept();

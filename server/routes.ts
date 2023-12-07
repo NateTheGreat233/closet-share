@@ -2,8 +2,9 @@ import { ObjectId } from "mongodb";
 
 import { Router, getExpressRouter } from "./framework/router";
 
-import { ClothingItem, Friend, Group, Post, Store, User, WebSession } from "./app";
+import { ClothingItem, Contract, Friend, Group, Post, Store, User, WebSession } from "./app";
 import { ClothingItemDoc } from "./concepts/clothingitem";
+import { ContractDoc } from "./concepts/contract";
 import { PostDoc, PostOptions } from "./concepts/post";
 import { UserDoc } from "./concepts/user";
 import { WebSessionDoc } from "./concepts/websession";
@@ -218,12 +219,82 @@ class Routes {
   @Router.patch("/borrow/clothingItems/:_id")
   async borrow(session: WebSessionDoc, _id: ObjectId) {
     const user = WebSession.getUser(session);
+    await ClothingItem.isBorrower(user, _id);
     return await ClothingItem.borrow(_id, user);
   }
 
   @Router.patch("/return/clothingItems/:_id")
-  async returnClothingItem(_id: ObjectId) {
+  async returnClothingItem(session: WebSessionDoc, _id: ObjectId) {
+    const user = WebSession.getUser(session);
+    await ClothingItem.isBorrower(user, _id);
     return await ClothingItem.returnClothingItem(_id);
+  }
+
+  @Router.get("/contracts/:user")
+  async getContracts(user?: string) {
+    let contracts;
+    if (user) {
+      const id = (await User.getUserByUsername(user))._id;
+      contracts = await Contract.getAllUserContracts(id);
+    } else {
+      contracts = await Contract.getContracts({});
+    }
+    return Responses.contracts(contracts);
+  }
+
+  @Router.get("/contracts/borrower/:borrower")
+  async getBorrowerContracts(borrower: string) {
+    const id = (await User.getUserByUsername(borrower))._id;
+    const contracts = await Contract.getContractsByBorrower(id);
+
+    return Responses.contracts(contracts);
+  }
+
+  @Router.get("/contracts/owner/:owner")
+  async getOwnerContracts(owner: string) {
+    const id = (await User.getUserByUsername(owner))._id;
+    const contracts = await Contract.getContractsByOwner(id);
+
+    return Responses.contracts(contracts);
+  }
+
+  @Router.get("/contracts/:item")
+  async getContractByItem(item: ObjectId) {
+    const contract = await Contract.getContractByItem(item);
+
+    return Responses.contract(contract);
+  }
+
+  @Router.post("/contracts")
+  async proposeContract(session: WebSessionDoc, item: ObjectId, borrowDate: Date, returnDate: Date, notes: string) {
+    // Borrower will propose the contract (user that's logged in)
+    const borrower = await WebSession.getUser(session);
+
+    const owner = await ClothingItem.getOwner(item);
+    const created = await Contract.propose(owner, borrower, item, borrowDate, returnDate, notes);
+    return { msg: created.msg, contract: await Responses.contract(created.contract) };
+  }
+
+  @Router.patch("/contracts/:_id")
+  async modifyContract(session: WebSessionDoc, _id: ObjectId, update: Partial<ContractDoc>) {
+    const user = WebSession.getUser(session);
+    await Contract.isInvolved(user, _id);
+
+    return await Contract.modify(_id, update);
+  }
+
+  @Router.patch("/contracts/finalize/:_id")
+  async finalizeContract(session: WebSessionDoc, _id: ObjectId) {
+    const user = WebSession.getUser(session);
+    await Contract.isInvolved(user, _id);
+    return await Contract.finalize(_id);
+  }
+
+  @Router.delete("/contracts/:_id")
+  async deleteContract(session: WebSessionDoc, _id: ObjectId) {
+    const user = WebSession.getUser(session);
+    await Contract.isInvolved(user, _id);
+    return await Contract.remove(_id);
   }
 
   @Router.post("/groups")
