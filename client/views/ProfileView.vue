@@ -3,19 +3,19 @@ import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
+import ClosetListComponent from "../components/Closet/ClosetListComponent.vue";
 import GroupsOnProfile from "../components/Group/GroupsOnProfile.vue";
-import StoreListComponent from "../components/Store/StoreListComponent.vue";
 import router from "../router";
 
 const route = useRoute();
 const username = ref("");
+const DEFAULT_PHOTO = "/client/assets/images/blankProfile.png";
 onMounted(async () => {
   username.value = route.params.username as string;
 });
-const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
-
-function goToSettings() {
-  router.push({ name: "Settings", params: { username: currentUsername.value } });
+const { currentProfilePhoto, currentUsername, isLoggedIn } = storeToRefs(useUserStore());
+async function goToSettings() {
+  await router.push({ name: "Settings", params: { username: currentUsername.value } });
 }
 </script>
 
@@ -28,10 +28,12 @@ function goToSettings() {
   <main class="column">
     <div>
       <h1>{{ currentUsername }}'s Profile</h1>
+      <img v-if="currentProfilePhoto" class="photo" :src="currentProfilePhoto" alt="photo" />
+      <img v-else class="photo" :src="DEFAULT_PHOTO" alt="photo" />
     </div>
     <div>
       <h1>My Closet</h1>
-      <StoreListComponent />
+      <ClosetListComponent />
     </div>
     <div class="two-columns">
       <!-- <div class="column">
@@ -45,6 +47,11 @@ function goToSettings() {
 </template>
 
 <style>
+.photo {
+  width: 150px;
+  display: flex;
+}
+
 .two-columns {
   display: flex;
   gap: 20px;
@@ -52,10 +59,14 @@ function goToSettings() {
 .column {
   flex: 1;
 }
+
 .settings-image {
   height: 1em;
+  display: flex;
+  justify-content: center;
+  align-self: center;
 }
 .settings-button {
-  margin-left: 20%;
+  margin-left: 80%;
 }
 </style>

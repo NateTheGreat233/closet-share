@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import StoreListComponent from "@/components/Store/StoreListComponent.vue";
+import ClosetListComponent from "@/components/Closet/ClosetListComponent.vue";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { onMounted, ref } from "vue";
@@ -18,7 +18,7 @@ onMounted(async () => {
 <template>
   <main>
     <h1>@{{ username }}'s Closet</h1>
-    <StoreListComponent v-if="username" :username="username" />
+    <ClosetListComponent v-if="username" :username="username" />
   </main>
 </template>
 

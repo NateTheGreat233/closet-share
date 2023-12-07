@@ -50,7 +50,7 @@ onBeforeMount(async () => {
   <section class="clothingItems" v-if="loaded && clothingItems.length !== 0">
     <template v-for="(group, index) in Math.ceil(clothingItems.length / 3)" :key="index">
       <div class="row">
-        <template v-for="(clothingItem, itemIndex) in clothingItems.slice(index * 3, index * 3 + 3)" :key="clothingItem._id">
+        <template v-for="clothingItem in clothingItems.slice(index * 3, index * 3 + 3)" :key="clothingItem._id">
           <article>
             <ClothingItemComponent v-if="editing !== clothingItem._id" :clothingItem="clothingItem" @refreshClothingItems="getClothingItems" @editClothingItem="updateEditing" />
             <EditClothingItemForm v-else :clothingItem="clothingItem" @refreshClothingItems="getClothingItems" @editClothingItem="updateEditing" />
@@ -58,10 +58,6 @@ onBeforeMount(async () => {
         </template>
       </div>
     </template>
-    <!-- <article v-for="clothingItem in clothingItems" :key="clothingItem._id">
-      <ClothingItemComponent v-if="editing !== clothingItem._id" :clothingItem="clothingItem" @refreshClothingItems="getClothingItems" @editClothingItem="updateEditing" />
-      <EditClothingItemForm v-else :clothingItem="clothingItem" @refreshClothingItems="getClothingItems" @editClothingItem="updateEditing" />
-    </article> -->
   </section>
   <p v-else-if="loaded">No clothing items found</p>
   <p v-else>Loading...</p>
