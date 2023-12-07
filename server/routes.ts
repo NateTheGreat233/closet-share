@@ -295,6 +295,7 @@ class Routes {
     const user = WebSession.getUser(session);
     await Contract.isInvolved(user, _id);
     return await Contract.remove(_id);
+  }
 
   @Router.post("/groups")
   async createGroup(session: WebSessionDoc, name: string, members?: Array<ObjectId>) {
