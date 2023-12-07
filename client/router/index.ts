@@ -20,7 +20,7 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
-      path: "/borrowed",
+      path: "/borrowed/:username",
       name: "Borrowed",
       component: BorrowedView,
       meta: { requiresAuth: true },
