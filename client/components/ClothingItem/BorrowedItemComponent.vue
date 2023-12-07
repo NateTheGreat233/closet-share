@@ -36,9 +36,6 @@ const onViewContractClick = () => {};
             <h2 class="button-text">I have returned this item</h2>
           </div>
           <div class="button-container">
-            <h2 class="button-text">contact owner</h2>
-          </div>
-          <div class="button-container">
             <h2 class="button-text">view contract details</h2>
           </div>
         </div>
