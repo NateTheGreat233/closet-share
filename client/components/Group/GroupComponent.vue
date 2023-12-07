@@ -52,10 +52,10 @@ console.log("username is " + currentUsername.value);
     </div>
   </div>
   <div class="actions">
-    <menu>
+    <!-- <menu>
       <li><button class="btn-small pure-button brown" @click="borrowClothingItem">Join</button></li>
       <li><button class="btn-small pure-button green" @click="deleteClothingItem">Return</button></li>
-    </menu>
+    </menu> -->
   </div>
 </template>
 

@@ -5,10 +5,12 @@ import ClothingItemComponent from "@/components/ClothingItem/ClothingItemCompone
 import EditClothingItemForm from "@/components/ClothingItem/EditClothingItemForm.vue";
 import CreateClothingItemForm from "@/components/ClothingItem/CreateClothingItemForm.vue";
 
+const { isLoggedIn } = storeToRefs(useUserStore());
 const props = defineProps(["username"]);
 const username = props.username;
 const store = ref<Array<Record<string, string>>>([]);
 const loaded = ref(false);
+let editing = ref("");
 
 async function getStore(username: string) {
   let storeData;
@@ -21,6 +23,10 @@ async function getStore(username: string) {
   store.value = storeData;
 }
 
+function updateEditing(id: string) {
+  editing.value = id;
+}
+
 onBeforeMount(async () => {
   await getStore(username);
 });
@@ -29,15 +35,15 @@ onBeforeMount(async () => {
 <template>
   <section v-if="isLoggedIn">
     <h2>Create a clothing item listing:</h2>
-    <CreateClothingItemForm @refreshClothingItems="getClothingItems" />
+    <CreateClothingItemForm @refreshClothingItems="getStore" />
   </section>
   <section class="clothingItems" v-if="loaded && store.length !== 0">
     <template v-for="(group, index) in Math.ceil(store.length / 3)" :key="index">
       <div class="row">
         <template v-for="clothingItem in store.slice(index * 3, index * 3 + 3)" :key="clothingItem._id">
           <article>
-            <ClothingItemComponent v-if="editing !== clothingItem._id" :clothingItem="clothingItem" @refreshClothingItems="getClothingItems" @editClothingItem="updateEditing" />
-            <EditClothingItemForm v-else :clothingItem="clothingItem" @refreshClothingItems="getClothingItems" @editClothingItem="updateEditing" />
+            <ClothingItemComponent v-if="editing !== clothingItem._id" :clothingItem="clothingItem" @refreshClothingItems="getStore" @editClothingItem="updateEditing" />
+            <EditClothingItemForm v-else :clothingItem="clothingItem" @refreshClothingItems="getStore" @editClothingItem="updateEditing" />
           </article>
         </template>
       </div>

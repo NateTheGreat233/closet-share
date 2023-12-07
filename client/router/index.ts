@@ -5,6 +5,7 @@ import { useUserStore } from "@/stores/user";
 import BorrowedView from "../views/BorrowedView.vue";
 import ClosetView from "../views/ClosetView.vue";
 import DashboardView from "../views/DashboardView.vue";
+import GroupView from "../views/GroupView.vue";
 import LoginView from "../views/LoginView.vue";
 import NotFoundView from "../views/NotFoundView.vue";
 import ProfileView from "../views/ProfileView.vue";
@@ -47,6 +48,12 @@ const router = createRouter({
       path: "/closet/:username",
       name: "Closet",
       component: ClosetView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/groups",
+      name: "Groups",
+      component: GroupView,
       meta: { requiresAuth: true },
     },
     {
