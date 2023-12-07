@@ -58,10 +58,6 @@ onBeforeMount(async () => {
         </template>
       </div>
     </template>
-    <!-- <article v-for="clothingItem in clothingItems" :key="clothingItem._id">
-      <ClothingItemComponent v-if="editing !== clothingItem._id" :clothingItem="clothingItem" @refreshClothingItems="getClothingItems" @editClothingItem="updateEditing" />
-      <EditClothingItemForm v-else :clothingItem="clothingItem" @refreshClothingItems="getClothingItems" @editClothingItem="updateEditing" />
-    </article> -->
   </section>
   <p v-else-if="loaded">No clothing items found</p>
   <p v-else>Loading...</p>

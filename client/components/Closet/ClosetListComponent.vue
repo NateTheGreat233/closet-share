@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from "vue";
 import { fetchy } from "../../utils/fetchy";
+import ClothingItemComponent from "@/components/ClothingItem/ClothingItemComponent.vue";
+import EditClothingItemForm from "@/components/ClothingItem/EditClothingItemForm.vue";
+import CreateClothingItemForm from "@/components/ClothingItem/CreateClothingItemForm.vue";
 
 const props = defineProps(["username"]);
 const username = props.username;
@@ -24,88 +27,60 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  <h2>Store Items:</h2>
+  <section v-if="isLoggedIn">
+    <h2>Create a clothing item listing:</h2>
+    <CreateClothingItemForm @refreshClothingItems="getClothingItems" />
+  </section>
   <section class="clothingItems" v-if="loaded && store.length !== 0">
-    <article v-for="clothingItem in store" :key="clothingItem._id">
-      {{ clothingItem }}
-    </article>
+    <template v-for="(group, index) in Math.ceil(store.length / 3)" :key="index">
+      <div class="row">
+        <template v-for="clothingItem in store.slice(index * 3, index * 3 + 3)" :key="clothingItem._id">
+          <article>
+            <ClothingItemComponent v-if="editing !== clothingItem._id" :clothingItem="clothingItem" @refreshClothingItems="getClothingItems" @editClothingItem="updateEditing" />
+            <EditClothingItemForm v-else :clothingItem="clothingItem" @refreshClothingItems="getClothingItems" @editClothingItem="updateEditing" />
+          </article>
+        </template>
+      </div>
+    </template>
   </section>
 </template>
 
 <style scoped>
-.container {
-  display: flex;
-  flex-direction: row;
-  gap: 40px;
-  width: 100%;
-}
-
-.button-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--gray);
-  padding: 10px;
-  border-radius: 15px;
-  min-width: 300px;
-}
-
-.button-container:hover {
-  cursor: pointer;
-  background-color: var(--gray-hover);
-}
-
-.button-text {
-  user-select: none;
-}
-
-h2 {
-  margin: 0px;
-}
-
-img {
-  object-fit: contain;
-  height: 100%;
-  width: 100%;
-}
-
-.actions-column {
+section {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  gap: 20px;
+  gap: 1em;
 }
 
-.info-column {
+section,
+p,
+.row {
+  margin: 0 auto;
+  max-width: 60em;
+}
+
+article {
+  background-color: var(--base-bg);
+  flex-basis: calc(33.33% - 20px);
+  box-sizing: border-box;
+  border-right: 1px solid #ccc;
+  padding-right: 20px;
+  border-radius: 1em;
   display: flex;
   flex-direction: column;
+  gap: 0.5em;
+  padding: 1em;
+}
+
+.posts {
+  padding: 1em;
+}
+
+.row {
+  display: flex;
   justify-content: space-between;
-  height: 100%;
-}
-
-.info-descriptions {
-  display: flex;
-  gap: 10px;
-  flex-direction: column;
-}
-
-.description-container {
-  display: flex;
-  flex-grow: 2;
-  flex-direction: row;
-  width: 100%;
-  justify-content: space-between;
-  background-color: var(--light-gray);
-  padding: 20px;
-}
-
-.image-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--light-gray);
-  padding: 10px;
-  width: 300px;
-  height: 250px;
+  margin: 0 auto;
+  max-width: 60em;
+  margin-bottom: 20px;
 }
 </style>
