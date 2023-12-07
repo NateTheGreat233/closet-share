@@ -4,7 +4,7 @@ import { formatDate } from "@/utils/formatDate";
 import { storeToRefs } from "pinia";
 import { defineEmits, defineProps, ref } from "vue";
 import { fetchy } from "../../utils/fetchy";
-import ContractPopup from "../Contract/ContractPopup.vue";
+import CreateContractPopup from "../Contract/CreateContractPopup.vue";
 
 const props = defineProps(["clothingItem"]);
 const emit = defineEmits(["editClothingItem", "refreshClothingItems"]);
@@ -70,7 +70,7 @@ console.log("username is " + currentUsername.value);
       <p v-else>Created on: {{ formatDate(props.clothingItem.dateCreated) }}</p>
     </article>
   </div>
-  <ContractPopup
+  <CreateContractPopup
     @onClose="() => (showContractPopup = false)"
     @onBorrow="onBorrow"
     :visible="showContractPopup"
