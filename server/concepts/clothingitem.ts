@@ -112,6 +112,9 @@ export default class ClothingItemConcept {
       throw new NotFoundError(`Clothing item ${_id} does not exist!`);
     } else if (clothingItem.borrower == borrower) {
       throw new AlreadyBorrowingItemError(borrower, _id);
+    } else if (clothingItem.borrower !== undefined && clothingItem.borrower !== null) {
+      // Means someone else is already borrowing the item, can't borrow it
+      throw new AnotherUserAlreadyBorrowingItemError(clothingItem.borrower, _id);
     } else {
       // To represent someone borrowing the item, should just update the borrower field
       await this.update(_id, { borrower: borrower });
@@ -229,5 +232,14 @@ export class AlreadyBorrowingItemError extends NotAllowedError {
     public readonly _id: ObjectId,
   ) {
     super("{0} is already borrowing clothing item {1}", user, _id);
+  }
+}
+
+export class AnotherUserAlreadyBorrowingItemError extends NotAllowedError {
+  constructor(
+    public readonly user: ObjectId,
+    public readonly _id: ObjectId,
+  ) {
+    super("Another user {0} is already borrowing clothing item {1}", user, _id);
   }
 }

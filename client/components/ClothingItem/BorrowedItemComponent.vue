@@ -1,14 +1,32 @@
 <script setup lang="ts">
 import { defineProps } from "vue";
+import { fetchy } from "../../utils/fetchy";
 
-const { owner, name, description, imageUrl } = defineProps({
+const { owner, name, description, imageUrl, clothingItem } = defineProps({
   owner: String,
   name: String,
   description: String,
   imageUrl: String,
+  clothingItem: Object,
 });
 
-const onReturnClick = () => {};
+const emit = defineEmits(["refreshClothingItems"]);
+
+const onReturnClick = async () => {
+  console.log("Button clicked!");
+  if (!clothingItem || !clothingItem._id) {
+    console.error("Clothing item or its ID is undefined");
+    return;
+  }
+  try {
+    await fetchy(`/api/return/clothingItems/${clothingItem._id}`, "PATCH", {});
+  } catch (e) {
+    console.error("Error:", e);
+    return;
+  }
+  emit("refreshClothingItems");
+  window.location.reload();
+};
 
 const onContactOwnerClick = () => {};
 
@@ -33,7 +51,7 @@ const onViewContractClick = () => {};
         </div>
         <div class="actions-column">
           <div class="button-container">
-            <h2 class="button-text">I have returned this item</h2>
+            <h2 class="button-text" @click="onReturnClick">I have returned this item</h2>
           </div>
           <div class="button-container">
             <h2 class="button-text">contact owner</h2>
