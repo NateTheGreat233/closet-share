@@ -2,12 +2,14 @@
 import { useUserStore } from "@/stores/user";
 import { formatDate } from "@/utils/formatDate";
 import { storeToRefs } from "pinia";
-import { defineEmits, defineProps } from "vue";
+import { defineEmits, defineProps, ref } from "vue";
 import { fetchy } from "../../utils/fetchy";
+import ContractPopup from "../Contract/ContractPopup.vue";
 
 const props = defineProps(["clothingItem"]);
 const emit = defineEmits(["editClothingItem", "refreshClothingItems"]);
 const { currentUsername } = storeToRefs(useUserStore());
+const showContractPopup = ref<boolean>(false);
 
 const deleteClothingItem = async () => {
   try {
@@ -19,6 +21,8 @@ const deleteClothingItem = async () => {
 };
 
 const borrowClothingItem = async () => {
+  showContractPopup.value = true;
+  /*
   try {
     await fetchy(`/api/borrow/clothingItems/${props.clothingItem._id}`, "PATCH", {});
   } catch (e) {
@@ -26,6 +30,7 @@ const borrowClothingItem = async () => {
     return;
   }
   emit("refreshClothingItems");
+  */
 };
 
 console.log(props.clothingItem);
@@ -56,6 +61,14 @@ console.log("username is " + currentUsername.value);
       <p v-else>Created on: {{ formatDate(props.clothingItem.dateCreated) }}</p>
     </article>
   </div>
+  <ContractPopup
+    @onClose="() => (showContractPopup = false)"
+    :visible="showContractPopup"
+    :imageUrl="props.clothingItem.imageUrl"
+    :title="props.clothingItem.name"
+    :owner="props.clothingItem.owner"
+    :notes="props.clothingItem.description"
+  />
 </template>
 
 <style scoped>

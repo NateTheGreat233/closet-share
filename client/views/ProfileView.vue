@@ -2,13 +2,16 @@
 import GroupsOnProfile from "../components/Group/GroupsOnProfile.vue";
 import ReviewsOnProfile from "../components/Review/ReviewsOnProfile.vue";
 import StoreListComponent from "../components/Store/StoreListComponent.vue";
+import { useUserStore } from "../stores/user";
+
+const { currentUsername } = useUserStore();
 </script>
 
 <template>
   <main class="column">
     <div>
       <h1>My Closet</h1>
-      <StoreListComponent />
+      <StoreListComponent :username="currentUsername" />
     </div>
     <div class="two-columns">
       <div class="column">
