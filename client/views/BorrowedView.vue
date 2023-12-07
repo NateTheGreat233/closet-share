@@ -1,19 +1,26 @@
 <script setup lang="ts">
 import Search from "@/components/Search/Search.vue";
+import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { onBeforeMount } from "vue";
 import BorrowedItemComponent from "../components/ClothingItem/BorrowedItemComponent.vue";
-import { useClothingItemStore } from "../stores/clothingItem";
+import { useBorrowedClothingItemStore, useClothingItemStore } from "../stores/clothingItem";
 
 const { allClothingItems } = storeToRefs(useClothingItemStore());
 const { getAllClothingItems } = useClothingItemStore();
+const { allBorrowedClothingItems } = storeToRefs(useBorrowedClothingItemStore());
+const { getBorrowedClothingItems } = useBorrowedClothingItemStore();
+const { currentUsername } = storeToRefs(useUserStore());
 
 onBeforeMount(async () => {
   // only if we haven't pre-populated the data, we'll fetch again
-  if (allClothingItems.value === undefined) {
-    await getAllClothingItems();
+  console.log("Fetching borrowed items...");
+  if (!allBorrowedClothingItems.value || allBorrowedClothingItems.value.length === 0) {
+    allBorrowedClothingItems.value = await getBorrowedClothingItems(currentUsername.value);
   }
 });
+console.log(currentUsername.value);
+console.log(allBorrowedClothingItems.value);
 </script>
 
 <template>
@@ -28,7 +35,8 @@ onBeforeMount(async () => {
         </div>
       </div>
       <div class="listing-wrapper">
-        <div v-for="item in allClothingItems" class="listing-container">
+        <!-- <div v-for="item in allBorrowedClothingItems" class="listing-container"> -->
+        <div v-for="(item, index) in allBorrowedClothingItems" :key="index" class="listing-container">
           <BorrowedItemComponent :owner="item.owner" :name="item.name" :description="item.description" :imageUrl="item.imageUrl" />
         </div>
       </div>

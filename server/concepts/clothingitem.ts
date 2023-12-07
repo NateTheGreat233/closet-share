@@ -104,10 +104,19 @@ export default class ClothingItemConcept {
    * @param item the id of the item to be borrowed
    * @param borrower the id of the user who is borrowing the item
    */
-  async borrow(item: ObjectId, borrower: ObjectId) {
-    // To represent someone borrowing the item, should just update the borrower field
-    await this.update(item, { borrower });
-    return { msg: "Clothing item successfully borrowed!" };
+  async borrow(_id: ObjectId, borrower: ObjectId) {
+    // Check if user is borrowing already first
+    const clothingItem = await this.clothingItems.readOne({ _id });
+
+    if (!clothingItem) {
+      throw new NotFoundError(`Clothing item ${_id} does not exist!`);
+    } else if (clothingItem.borrower == borrower) {
+      throw new AlreadyBorrowingItemError(borrower, _id);
+    } else {
+      // To represent someone borrowing the item, should just update the borrower field
+      await this.update(_id, { borrower: borrower });
+      return { msg: "Clothing item successfully borrowed!" };
+    }
   }
 
   /**
@@ -127,7 +136,7 @@ export default class ClothingItemConcept {
    */
   async getBorrowedItems(borrower: ObjectId) {
     const borrowedItems = await this.clothingItems.readMany(
-      { borrower },
+      { borrower: borrower },
       {
         sort: { dateUpdated: -1 },
       },
@@ -211,5 +220,14 @@ export class ClothingItemBorrowerNotMatchError extends NotAllowedError {
     public readonly _id: ObjectId,
   ) {
     super("{0} is not the borrower of clothing item {1}!", borrower, _id);
+  }
+}
+
+export class AlreadyBorrowingItemError extends NotAllowedError {
+  constructor(
+    public readonly user: ObjectId,
+    public readonly _id: ObjectId,
+  ) {
+    super("{0} is already borrowing clothing item {1}", user, _id);
   }
 }

@@ -9,7 +9,7 @@ const emit = defineEmits(["editClothingItem", "refreshClothingItems"]);
 
 const editClothingItem = async (description: string) => {
   try {
-    await fetchy(`/api/clotihngItems/${props.clothingItem._id}`, "PATCH", { body: { update: { description: description } } });
+    await fetchy(`/api/clothingItems/${props.clothingItem._id}`, "PATCH", { body: { update: { description: description } } });
   } catch (e) {
     return;
   }
