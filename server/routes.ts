@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 
 import { Router, getExpressRouter } from "./framework/router";
 
-import { ClothingItem, Contract, Friend, Post, Store, User, WebSession } from "./app";
+import { ClothingItem, Contract, Friend, Group, Post, Store, User, WebSession } from "./app";
 import { ClothingItemDoc } from "./concepts/clothingitem";
 import { ContractDoc } from "./concepts/contract";
 import { PostDoc, PostOptions } from "./concepts/post";
