@@ -17,6 +17,7 @@ const links = ref<Map<string, string>>(
     ["borrowed", "Borrowed"],
     ["closet", "Closet"],
     ["profile", "Profile"],
+    ["settings", "Settings"],
   ]),
 );
 
