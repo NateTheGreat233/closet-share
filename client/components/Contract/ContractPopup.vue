@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, ref, watchEffect } from "vue";
+import { computed, defineProps, ref, watchEffect } from "vue";
 
 const { visible, imageUrl, title, owner, notes } = defineProps({
   visible: Boolean,
@@ -19,11 +19,12 @@ const maxBorrowDate = ref<string>();
 const minReturnDate = ref<string>(new Date().toISOString().split("T")[0]);
 
 watchEffect(() => {
-  if (returnDate.value) {
-    console.log(new Date(returnDate.value).toISOString().split("T")[0]);
-  }
   maxBorrowDate.value = returnDate.value ? new Date(returnDate.value).toISOString().split("T")[0] : undefined;
   minReturnDate.value = (borrowDate.value ? new Date(borrowDate.value) : new Date()).toISOString().split("T")[0];
+});
+
+const allowedToBorrow = computed(() => {
+  return borrowDate.value && returnDate.value;
 });
 
 const onBorrow = () => {
@@ -59,8 +60,13 @@ const onBorrow = () => {
                 <input type="date" :min="minReturnDate" v-model="returnDate" />
               </div>
             </div>
-            <div class="button-container" @click="onBorrow">
-              <h2 class="button-text">borrow</h2>
+            <div class="button-row">
+              <div class="button-container" @click="() => emit('onClose')">
+                <h2 class="button-text">go back</h2>
+              </div>
+              <div class="button-container" :class="{ 'button-container-disabled': !allowedToBorrow }" @click="onBorrow">
+                <h2 class="button-text">borrow</h2>
+              </div>
             </div>
           </div>
         </div>
@@ -74,6 +80,14 @@ const onBorrow = () => {
   display: flex;
   width: 47%;
   height: 100%;
+}
+
+.button-row {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  gap: 20px;
+  justify-content: center;
 }
 
 .date-row {
@@ -133,11 +147,22 @@ h3 {
   padding: 10px;
   background-color: var(--gray);
   border-radius: 10px;
+  padding-left: 50px;
+  padding-right: 50px;
 }
 
 .button-container:hover {
   cursor: pointer;
   background-color: var(--gray-hover);
+}
+
+.button-container-disabled {
+  background-color: #808080;
+}
+
+.button-container-disabled:hover {
+  cursor: default;
+  background-color: #808080;
 }
 
 .right-container {
