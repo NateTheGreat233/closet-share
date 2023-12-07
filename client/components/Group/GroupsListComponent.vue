@@ -6,20 +6,34 @@ import GroupComponent from "./GroupComponent.vue";
 
 const loaded = ref(false);
 const groups = ref<Array<Record<string, string>>>([]);
+const users = ref<Record<string, string>>({});
 
 async function getAllGroups(name?: string) {
   let groupData;
   try {
     groupData = await fetchy(`/api/groups${name ?? ""}`, "GET");
-    loaded.value = true;
   } catch (_) {
     return;
   }
   groups.value = groupData;
 }
 
+async function getAllUsers() {
+  let userData;
+  try {
+    userData = await fetchy(`/api/users`, "GET");
+  } catch (_) {
+    return;
+  }
+  userData.forEach((user: Record<string, string>) => {
+    if (user._id) users.value[user._id] = user.username;
+  });
+}
+
 onBeforeMount(async () => {
   await getAllGroups();
+  await getAllUsers();
+  loaded.value = true;
 });
 </script>
 
@@ -36,7 +50,7 @@ onBeforeMount(async () => {
       <section class="groups" v-if="loaded && groups.length !== 0">
         <div v-for="group in groups" class="groups-container" v-bind:key="group.name">
           <div class="group-container">
-            <GroupComponent :group="group" @refreshGroups="getAllGroups" />
+            <GroupComponent :group="group" :allUsers="users" @refreshGroups="getAllGroups" />
           </div>
         </div>
       </section>

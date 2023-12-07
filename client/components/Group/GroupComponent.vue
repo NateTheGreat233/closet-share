@@ -1,28 +1,29 @@
 <script setup lang="ts">
 import { useUserStore } from "@/stores/user";
 import { formatDate } from "@/utils/formatDate";
-import { storeToRefs } from "pinia";
-import { defineProps, onBeforeMount, ref } from "vue";
 import { fetchy } from "../../utils/fetchy";
 
-const props = defineProps(["group"]);
-const loaded = ref(false);
-const users = ref<Array<Record<string, string>>>([]);
+import { ObjectId } from "mongodb";
+import { storeToRefs } from "pinia";
+import { defineProps, onBeforeMount } from "vue";
 
-const emit = defineEmits(["refreshClothingItems"]);
-const { currentUsername } = storeToRefs(useUserStore());
+const props = defineProps(["group", "allUsers", "allRequests"]);
+const users: Array<string> = props.group.members.map((id: string) => props.allUsers[id]);
+const emit = defineEmits(["refreshGroups"]);
+const { currentUsername, currentUserId } = storeToRefs(useUserStore());
 
-async function getUsers() {
+async function sendRequestToJoin(groupId: ObjectId) {
   try {
-    return await fetchy(`/api/users`, "GET");
+    await fetchy(`/api/group/${groupId}`, "POST", {
+      body: { userId: currentUserId.value },
+    });
+    console.log("sent request");
   } catch (_) {
     return;
   }
 }
 
-onBeforeMount(async () => {
-  await getUsers();
-});
+onBeforeMount(async () => {});
 
 console.log("username is " + currentUsername.value);
 </script>
@@ -35,27 +36,27 @@ console.log("username is " + currentUsername.value);
     <li><button class="btn-small pure-button brown" @click="borrowClothingItem">Join</button></li>
     <li><button class="btn-small pure-button green" @click="deleteClothingItem">Return</button></li>
   </menu> -->
-    <div>
+    <div class="members-box">
       <article class="members">
-        <div v-for="member in props.group.members" class="groups-container" v-bind:key="member"></div>
+        <h3>{{ users.join(",") }}</h3>
       </article>
     </div>
-    <div class="base">
-      <!-- <menu v-if="props.clothingItem.owner == currentUsername">
+    <div class="actions">
+      <menu v-if="!users.includes(currentUsername)">
+        <li><button class="btn-big pure-button brown" @click="() => sendRequestToJoin(props.group._id)">Request to Join</button></li>
+        <!-- <li><button class="btn-small pure-button green" @click="deleteClothingItem">Return</button></li> -->
+      </menu>
+      <div class="base">
+        <!-- <menu v-if="props.clothingItem.owner == currentUsername">
       <li><button class="btn-small pure-button" @click="emit('editClothingItem', props.clothingItem._id)">Edit</button></li>
       <li><button class="button-error btn-small pure-button" @click="deleteClothingItem">Delete</button></li>
     </menu> -->
-      <article class="timestamp">
-        <p v-if="props.group.dateCreated !== props.group.dateUpdated">Edited on: {{ formatDate(props.group.dateUpdated) }}</p>
-        <p v-else>Created on: {{ formatDate(props.group.dateCreated) }}</p>
-      </article>
+        <article class="timestamp">
+          <p v-if="props.group.dateCreated !== props.group.dateUpdated">Edited on: {{ formatDate(props.group.dateUpdated) }}</p>
+          <p v-else>Created on: {{ formatDate(props.group.dateCreated) }}</p>
+        </article>
+      </div>
     </div>
-  </div>
-  <div class="actions">
-    <!-- <menu>
-      <li><button class="btn-small pure-button brown" @click="borrowClothingItem">Join</button></li>
-      <li><button class="btn-small pure-button green" @click="deleteClothingItem">Return</button></li>
-    </menu> -->
   </div>
 </template>
 
@@ -67,6 +68,10 @@ p {
 .name {
   font-weight: bold;
   font-size: 1.2em;
+}
+
+.members-box {
+  margin: 20px;
 }
 
 menu {
@@ -90,10 +95,7 @@ menu {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.base article:only-child {
-  margin-left: auto;
+  margin-top: 10px;
 }
 
 img {
