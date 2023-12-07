@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import Search from "@/components/Search/Search.vue";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { onMounted, ref } from "vue";
@@ -33,13 +32,13 @@ console.log(allBorrowedClothingItems.value);
 <template>
   <main>
     <div v-if="allBorrowedClothingItems && allBorrowedClothingItems.length" class="container">
-      <Search />
+      <!-- <Search /> -->
       <div class="top-row">
         <h1>currently borrowing</h1>
-        <div class="history-button-container">
+        <!-- <div class="history-button-container">
           <img src="@/assets/images/book.png" @dragstart="(e) => e.preventDefault()" />
           <h2>HISTORY</h2>
-        </div>
+        </div> -->
       </div>
       <div class="listing-wrapper">
         <!-- <div v-for="item in allBorrowedClothingItems" class="listing-container"> -->

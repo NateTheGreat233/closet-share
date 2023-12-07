@@ -4,7 +4,6 @@ import { storeToRefs } from "pinia";
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import GroupsOnProfile from "../components/Group/GroupsOnProfile.vue";
-import ReviewsOnProfile from "../components/Review/ReviewsOnProfile.vue";
 import StoreListComponent from "../components/Store/StoreListComponent.vue";
 import router from "../router";
 
@@ -23,7 +22,7 @@ function goToSettings() {
 <template>
   <section>
     <h1 v-if="isLoggedIn && username == currentUsername">
-      <button @click="goToSettings"><img class="settings-button" src="@/assets/images/settings.png" /></button>
+      <button class="settings-button" @click="goToSettings"><img class="settings-image" src="@/assets/images/settings.png" /></button>
     </h1>
   </section>
   <main class="column">
@@ -35,9 +34,9 @@ function goToSettings() {
       <StoreListComponent />
     </div>
     <div class="two-columns">
-      <div class="column">
+      <!-- <div class="column">
         <ReviewsOnProfile />
-      </div>
+      </div> -->
       <div class="column">
         <GroupsOnProfile />
       </div>
@@ -53,7 +52,10 @@ function goToSettings() {
 .column {
   flex: 1;
 }
-.settings-button {
+.settings-image {
   height: 1em;
+}
+.settings-button {
+  margin-left: 20%;
 }
 </style>
