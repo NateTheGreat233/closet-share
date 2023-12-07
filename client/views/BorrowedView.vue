@@ -2,7 +2,7 @@
 import Search from "@/components/Search/Search.vue";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
-import { onBeforeMount } from "vue";
+import { onMounted, ref } from "vue";
 import BorrowedItemComponent from "../components/ClothingItem/BorrowedItemComponent.vue";
 import { useBorrowedClothingItemStore, useClothingItemStore } from "../stores/clothingItem";
 
@@ -12,12 +12,19 @@ const { allBorrowedClothingItems } = storeToRefs(useBorrowedClothingItemStore())
 const { getBorrowedClothingItems } = useBorrowedClothingItemStore();
 const { currentUsername } = storeToRefs(useUserStore());
 
-onBeforeMount(async () => {
-  // only if we haven't pre-populated the data, we'll fetch again
+const isDataLoaded = ref(false);
+
+// onBeforeMount(async () => {
+//   // only if we haven't pre-populated the data, we'll fetch again
+//   console.log("Fetching borrowed items...");
+//   if (allBorrowedClothingItems.value == undefined) {
+//     await getBorrowedClothingItems(currentUsername.value);
+//     isDataLoaded.value = true;
+//   }
+// });
+onMounted(async () => {
   console.log("Fetching borrowed items...");
-  if (!allBorrowedClothingItems.value || allBorrowedClothingItems.value.length === 0) {
-    allBorrowedClothingItems.value = await getBorrowedClothingItems(currentUsername.value);
-  }
+  await getBorrowedClothingItems(currentUsername.value);
 });
 console.log(currentUsername.value);
 console.log(allBorrowedClothingItems.value);
@@ -25,7 +32,7 @@ console.log(allBorrowedClothingItems.value);
 
 <template>
   <main>
-    <div class="container">
+    <div v-if="allBorrowedClothingItems && allBorrowedClothingItems.length" class="container">
       <Search />
       <div class="top-row">
         <h1>currently borrowing</h1>
