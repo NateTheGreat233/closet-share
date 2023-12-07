@@ -3,7 +3,6 @@ import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
-import ClosetListComponent from "../components/Closet/ClosetListComponent.vue";
 import GroupsOnProfile from "../components/Group/GroupsOnProfile.vue";
 import router from "../router";
 
@@ -31,10 +30,10 @@ async function goToSettings() {
       <img v-if="currentProfilePhoto" class="photo" :src="currentProfilePhoto" alt="photo" />
       <img v-else class="photo" :src="DEFAULT_PHOTO" alt="photo" />
     </div>
-    <div>
+    <!-- <div>
       <h1>My Closet</h1>
       <ClosetListComponent />
-    </div>
+    </div> -->
     <div class="two-columns">
       <!-- <div class="column">
         <ReviewsOnProfile />
