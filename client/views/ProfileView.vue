@@ -1,14 +1,14 @@
 <script setup lang="ts">
+import ClosetListComponent from "../components/Closet/ClosetListComponent.vue";
 import GroupsOnProfile from "../components/Group/GroupsOnProfile.vue";
 import ReviewsOnProfile from "../components/Review/ReviewsOnProfile.vue";
-import StoreListComponent from "../components/Store/StoreListComponent.vue";
 </script>
 
 <template>
   <main class="column">
     <div>
       <h1>My Closet</h1>
-      <StoreListComponent />
+      <ClosetListComponent />
     </div>
     <div class="two-columns">
       <div class="column">

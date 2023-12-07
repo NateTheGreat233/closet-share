@@ -3,12 +3,12 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import { useUserStore } from "@/stores/user";
 import BorrowedView from "../views/BorrowedView.vue";
+import ClosetView from "../views/ClosetView.vue";
 import DashboardView from "../views/DashboardView.vue";
 import LoginView from "../views/LoginView.vue";
 import NotFoundView from "../views/NotFoundView.vue";
 import ProfileView from "../views/ProfileView.vue";
 import SettingsView from "../views/SettingsView.vue";
-import StoreView from "../views/StoreView.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -46,7 +46,7 @@ const router = createRouter({
     {
       path: "/closet/:username",
       name: "Closet",
-      component: StoreView,
+      component: ClosetView,
       meta: { requiresAuth: true },
     },
     {
