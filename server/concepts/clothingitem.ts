@@ -159,6 +159,40 @@ export default class ClothingItemConcept {
   }
 
   /**
+   * Gets all clothing items currently available (not being borrowed), and that don't belong to that user
+   * Basically, all borrowable items by the user
+   * @param user the object id of the user
+   * @returns a promise that resolves to a list of the clothing items that can be borrowed by the user
+   */
+  async getBorrowableItems(user: ObjectId) {
+    const unborrowedItems = await this.clothingItems.readMany(
+      { borrower: { $exists: false } },
+      {
+        sort: { dateUpdated: -1 },
+      },
+    );
+
+    return unborrowedItems.filter((item) => {
+      return item.owner !== user;
+    });
+  }
+
+  /**
+   * Gets all borrowable clothing items associated with the query
+   * @param query a given query
+   * @returns a promise that resolves to a list of clothing items matching the query
+   */
+  async getAllBorrowableClothingItems(query: Filter<ClothingItemDoc>) {
+    const borrowableClothingItems = await this.clothingItems.readMany(
+      { ...query, borrower: undefined },
+      {
+        sort: { dateUpdated: -1 },
+      },
+    );
+    return borrowableClothingItems;
+  }
+
+  /**
    * Deletes a clothing item from a storefront.
    * @param item the id of the clothing item object to be deleted
    * @returns a message that the clothing item was deleted successfully
