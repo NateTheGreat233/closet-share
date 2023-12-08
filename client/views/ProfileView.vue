@@ -35,9 +35,9 @@ async function goToSettings() {
       <ClosetListComponent />
     </div> -->
     <div class="two-columns">
-      <!-- <div class="column">
-        <ReviewsOnProfile />
-      </div> -->
+      <div class="column">
+        <ClosetListComponent />
+      </div>
       <div class="column">
         <GroupsOnProfile />
       </div>

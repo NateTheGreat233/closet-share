@@ -1,18 +1,50 @@
 <script setup lang="ts">
-import { defineProps } from "vue";
+import { defineProps, onBeforeMount, ref } from "vue";
+import { fetchy } from "../../utils/fetchy";
+import ViewContractPopup from "../Contract/ViewContractPopup.vue";
 
-const { owner, name, description, imageUrl } = defineProps({
+const { owner, name, description, imageUrl, itemId } = defineProps({
   owner: String,
   name: String,
   description: String,
   imageUrl: String,
+  itemId: String,
 });
 
-const onReturnClick = () => {};
+const contract = ref<any>();
+const showContractDetails = ref<boolean>(false);
 
-const onContactOwnerClick = () => {};
+const onReturnClick = async () => {
+  console.log("Button clicked!");
+  try {
+    await fetchy(`/api/return/clothingItems/${itemId}`, "PATCH", {});
+  } catch (e) {
+    console.error("Error:", e);
+    return;
+  }
+  window.location.reload();
+};
 
-const onViewContractClick = () => {};
+const onViewContractClick = async () => {
+  showContractDetails.value = true;
+};
+
+onBeforeMount(async () => {
+  contract.value = await fetchy(`/api/contracts/fromItem/${itemId}`, "GET");
+  console.log(contract.value);
+});
+
+const onClose = () => {
+  showContractDetails.value = false;
+};
+
+function formatDate(dateString: string | undefined | null): string {
+  if (!dateString) {
+    return "";
+  }
+  const date = new Date(dateString);
+  return date.toLocaleDateString(); // Adjust the formatting as needed
+}
 </script>
 
 <template>
@@ -26,24 +58,22 @@ const onViewContractClick = () => {};
           <h2>{{ name?.toUpperCase() }}</h2>
           <div class="info-descriptions">
             <h2>owner: @{{ owner }}</h2>
-            <h2>date borrowed: TODO</h2>
-            <h2>return date: TODO</h2>
+            <h2>date borrowed: {{ formatDate(contract?.borrowDate) }}</h2>
+            <h2>return date: {{ formatDate(contract?.returnDate) }}</h2>
             <h2>notes: {{ description }}</h2>
           </div>
         </div>
         <div class="actions-column">
-          <div class="button-container">
+          <div class="button-container" @click="onReturnClick">
             <h2 class="button-text">I have returned this item</h2>
           </div>
-          <div class="button-container">
-            <h2 class="button-text">contact owner</h2>
-          </div>
-          <div class="button-container">
+          <div class="button-container" @click="onViewContractClick">
             <h2 class="button-text">view contract details</h2>
           </div>
         </div>
       </div>
     </div>
+    <ViewContractPopup @onClose="onClose" :visible="showContractDetails" :borrowDate="contract?.borrowDate" :returnDate="contract?.returnDate" />
   </main>
 </template>
 

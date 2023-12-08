@@ -2,12 +2,14 @@
 import { useUserStore } from "@/stores/user";
 import { formatDate } from "@/utils/formatDate";
 import { storeToRefs } from "pinia";
-import { defineEmits, defineProps } from "vue";
+import { defineEmits, defineProps, ref } from "vue";
 import { fetchy } from "../../utils/fetchy";
+import CreateContractPopup from "../Contract/CreateContractPopup.vue";
 
 const props = defineProps(["clothingItem"]);
 const emit = defineEmits(["editClothingItem", "refreshClothingItems"]);
 const { currentUsername } = storeToRefs(useUserStore());
+const showContractPopup = ref<boolean>(false);
 
 const deleteClothingItem = async () => {
   try {
@@ -18,9 +20,21 @@ const deleteClothingItem = async () => {
   emit("refreshClothingItems");
 };
 
-const borrowClothingItem = async () => {
+const onClickBorrow = async () => {
+  showContractPopup.value = true;
+};
+
+const onBorrow = async ({ borrowDate, returnDate }: { borrowDate: Date; returnDate: Date }) => {
   try {
     await fetchy(`/api/borrow/clothingItems/${props.clothingItem._id}`, "PATCH", {});
+    const { contract } = await fetchy(`/api/contracts`, "POST", {
+      body: {
+        item: props.clothingItem._id,
+        borrowDate,
+        returnDate,
+      },
+    });
+    await fetchy(`/api/contracts/finalize/${contract._id}`, "PATCH");
   } catch (e) {
     console.error("Error:", e);
     return;
@@ -42,7 +56,7 @@ console.log("username is " + currentUsername.value);
   <p class="name">{{ props.clothingItem.name }}</p>
   <p class="description">{{ props.clothingItem.description }}</p>
   <menu v-if="props.clothingItem.owner !== currentUsername">
-    <li><button class="btn-small pure-button brown" @click="borrowClothingItem">Borrow</button></li>
+    <li><button class="btn-small pure-button brown" @click="onClickBorrow">Borrow</button></li>
     <!-- <li><button class="btn-small pure-button green" @click="deleteClothingItem">Return</button></li> -->
   </menu>
   <img :src="props.clothingItem.imageUrl" alt="photo" />
@@ -56,6 +70,15 @@ console.log("username is " + currentUsername.value);
       <p v-else>Created on: {{ formatDate(props.clothingItem.dateCreated) }}</p>
     </article>
   </div>
+  <CreateContractPopup
+    @onClose="() => (showContractPopup = false)"
+    @onBorrow="onBorrow"
+    :visible="showContractPopup"
+    :imageUrl="props.clothingItem.imageUrl"
+    :title="props.clothingItem.name"
+    :owner="props.clothingItem.owner"
+    :notes="props.clothingItem.description"
+  />
 </template>
 
 <style scoped>
