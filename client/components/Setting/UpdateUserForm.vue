@@ -32,9 +32,12 @@ const handleImageUpload = async (url: string) => {
 
 <template>
   <h2>Update user details</h2>
-  <form @submit.prevent="updateProfilePicture" class="pure-form">
-    <ImageUploader @uploadImage="handleImageUpload" />
-  </form>
+  <section>
+    <h3>Change Profile Picture:</h3>
+    <form @submit.prevent="updateProfilePicture" class="pure-form">
+      <ImageUploader @uploadImage="handleImageUpload" />
+    </form>
+  </section>
 
   <form @submit.prevent="updateUsername" class="pure-form">
     <fieldset>
