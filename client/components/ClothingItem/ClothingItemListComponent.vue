@@ -36,6 +36,11 @@ onBeforeMount(async () => {
   await getClothingItems();
   loaded.value = true;
 });
+
+const handleRefreshClothingItems = async (owner?: string) => {
+  // Fetch or update the clothing items after a delete operation
+  await getClothingItems(owner);
+};
 </script>
 
 <template>
@@ -53,8 +58,8 @@ onBeforeMount(async () => {
       <div class="row">
         <template v-for="clothingItem in clothingItems.slice(index * 3, index * 3 + 3)" :key="clothingItem._id">
           <article>
-            <ClothingItemComponent v-if="editing !== clothingItem._id" :clothingItem="clothingItem" @refreshClothingItems="getClothingItems" @editClothingItem="updateEditing" />
-            <EditClothingItemForm v-else :clothingItem="clothingItem" @refreshClothingItems="getClothingItems" @editClothingItem="updateEditing" />
+            <ClothingItemComponent v-if="editing !== clothingItem._id" :clothingItem="clothingItem" @refreshClothingItems="handleRefreshClothingItems(searchOwner)" @editClothingItem="updateEditing" />
+            <EditClothingItemForm v-else :clothingItem="clothingItem" @refreshClothingItems="handleRefreshClothingItems(searchOwner)" @editClothingItem="updateEditing" />
           </article>
         </template>
       </div>

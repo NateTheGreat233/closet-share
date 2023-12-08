@@ -15,6 +15,7 @@ const editClothingItem = async (description: string) => {
   }
   emit("editClothingItem");
   emit("refreshClothingItems");
+  window.location.reload();
 };
 </script>
 
@@ -24,7 +25,7 @@ const editClothingItem = async (description: string) => {
     <textarea id="description" v-model="description" placeholder="Size, brand, etc." required> </textarea>
     <div class="base">
       <menu>
-        <li><button class="btn-small pure-button-primary pure-button" type="submit">Save</button></li>
+        <li><button class="btn-small pure-button-primary pure-button" type="submit" @click="emit('refreshClothingItems')">Save</button></li>
         <li><button class="btn-small pure-button" @click="emit('editClothingItem')">Cancel</button></li>
       </menu>
       <p v-if="props.clothingItem.dateCreated !== props.clothingItem.dateUpdated" class="timestamp">Edited on: {{ formatDate(props.clothingItem.dateUpdated) }}</p>

@@ -18,6 +18,7 @@ const deleteClothingItem = async () => {
     return;
   }
   emit("refreshClothingItems");
+  window.location.reload();
 };
 
 const onClickBorrow = async () => {
