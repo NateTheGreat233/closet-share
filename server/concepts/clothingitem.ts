@@ -128,7 +128,7 @@ export default class ClothingItemConcept {
    */
   async returnClothingItem(item: ObjectId) {
     // To represent someone removing the item, should just clear the borrower field
-    await this.update(item, { borrower: undefined });
+    await this.update(item, { borrower: null });
     return { msg: "Clothing item successfully returned!" };
   }
 
@@ -156,6 +156,40 @@ export default class ClothingItemConcept {
     const borrowedItems = await this.getBorrowedItems(borrower);
 
     return borrowedItems.map((clothingItem) => clothingItem._id);
+  }
+
+  /**
+   * Gets all clothing items currently available (not being borrowed), and that don't belong to that user
+   * Basically, all borrowable items by the user
+   * @param user the object id of the user
+   * @returns a promise that resolves to a list of the clothing items that can be borrowed by the user
+   */
+  async getBorrowableItems(user: ObjectId) {
+    const unborrowedItems = await this.clothingItems.readMany(
+      { borrower: { $exists: false } },
+      {
+        sort: { dateUpdated: -1 },
+      },
+    );
+
+    return unborrowedItems.filter((item) => {
+      return item.owner !== user;
+    });
+  }
+
+  /**
+   * Gets all borrowable clothing items associated with the query
+   * @param query a given query
+   * @returns a promise that resolves to a list of clothing items matching the query
+   */
+  async getAllBorrowableClothingItems(query: Filter<ClothingItemDoc>) {
+    const borrowableClothingItems = await this.clothingItems.readMany(
+      { ...query, $or: [{ borrower: null }, { borrower: { $exists: false } }] },
+      {
+        sort: { dateUpdated: -1 },
+      },
+    );
+    return borrowableClothingItems;
   }
 
   /**

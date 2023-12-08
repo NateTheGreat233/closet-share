@@ -174,7 +174,7 @@ class Routes {
       const id = (await User.getUserByUsername(owner))._id;
       clothingItems = await ClothingItem.getClothingItems(id);
     } else {
-      clothingItems = await ClothingItem.getAllClothingItems({});
+      clothingItems = await ClothingItem.getAllBorrowableClothingItems({});
     }
     return Responses.clothingItems(clothingItems);
   }
@@ -193,6 +193,14 @@ class Routes {
     const borrowedItems = await ClothingItem.getBorrowedItems(id);
 
     return Responses.clothingItems(borrowedItems);
+  }
+
+  @Router.get("/dashboardItems")
+  async getDashboardItems(user: string) {
+    const id = (await User.getUserByUsername(user))._id;
+    const borrowableItems = await ClothingItem.getBorrowableItems(id);
+
+    return Responses.clothingItems(borrowableItems);
   }
 
   @Router.post("/clothingItems")
