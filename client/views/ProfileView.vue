@@ -3,6 +3,7 @@ import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
+import ClosetListComponent from "../components/Closet/ClosetListComponent.vue";
 import GroupsOnProfile from "../components/Group/GroupsOnProfile.vue";
 import router from "../router";
 
