@@ -31,14 +31,10 @@ async function goToSettings() {
       <img v-if="currentProfilePhoto" class="photo" :src="currentProfilePhoto" alt="photo" />
       <img v-else class="photo" :src="DEFAULT_PHOTO" alt="photo" />
     </div>
-    <div>
-      <h1>My Closet</h1>
-      <ClosetListComponent />
-    </div>
     <div class="two-columns">
-      <!-- <div class="column">
-        <ReviewsOnProfile />
-      </div> -->
+      <div class="column">
+        <ClosetListComponent />
+      </div>
       <div class="column">
         <GroupsOnProfile />
       </div>
