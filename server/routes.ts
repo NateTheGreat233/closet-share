@@ -5,6 +5,7 @@ import { Router, getExpressRouter } from "./framework/router";
 import { ClothingItem, Contract, Friend, Group, Post, Store, User, WebSession } from "./app";
 import { ClothingItemDoc } from "./concepts/clothingitem";
 import { ContractDoc } from "./concepts/contract";
+import { GroupDoc } from "./concepts/group";
 import { PostDoc, PostOptions } from "./concepts/post";
 import { UserDoc } from "./concepts/user";
 import { WebSessionDoc } from "./concepts/websession";
@@ -305,15 +306,15 @@ class Routes {
   }
 
   @Router.post("/groups")
-  async createGroup(session: WebSessionDoc, name: string, members?: Array<ObjectId>) {
+  async createGroup(session: WebSessionDoc, name: string, imageUrl: string, members?: Array<ObjectId>) {
     const user = WebSession.getUser(session);
-    return await Group.createGroup(user, name, members);
+    return await Group.createGroup(user, name, imageUrl, members);
   }
 
   @Router.patch("/groups/:_id")
-  async updateGroup(session: WebSessionDoc, _id: ObjectId, name: string) {
+  async updateGroup(session: WebSessionDoc, _id: ObjectId, update: Partial<GroupDoc>) {
     const user = WebSession.getUser(session);
-    return await Group.updateName(user, _id, name);
+    return await Group.updateGroup(user, _id, update);
   }
 
   @Router.delete("/groups/:_id")
