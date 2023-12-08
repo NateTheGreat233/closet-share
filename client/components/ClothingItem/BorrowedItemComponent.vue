@@ -14,7 +14,16 @@ const { owner, name, description, imageUrl, itemId } = defineProps({
 const contract = ref<any>();
 const showContractDetails = ref<boolean>(false);
 
-const onReturnClick = () => {};
+const onReturnClick = async () => {
+  console.log("Button clicked!");
+  try {
+    await fetchy(`/api/return/clothingItems/${itemId}`, "PATCH", {});
+  } catch (e) {
+    console.error("Error:", e);
+    return;
+  }
+  window.location.reload();
+};
 
 const onViewContractClick = async () => {
   showContractDetails.value = true;
@@ -47,7 +56,7 @@ const onClose = () => {
           </div>
         </div>
         <div class="actions-column">
-          <div class="button-container">
+          <div class="button-container" @click="onReturnClick">
             <h2 class="button-text">I have returned this item</h2>
           </div>
           <div class="button-container" @click="onViewContractClick">
