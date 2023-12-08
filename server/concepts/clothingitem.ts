@@ -198,7 +198,7 @@ export default class ClothingItemConcept {
    * @returns a message that the clothing item was deleted successfully
    */
   async removeClothingItem(item: ObjectId) {
-    await this.clothingItems.deleteOne({ item });
+    await this.clothingItems.deleteOne({ _id: item });
     return { msg: "Clothing item deleted successfully!" };
   }
 

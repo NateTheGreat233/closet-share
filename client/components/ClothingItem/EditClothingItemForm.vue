@@ -15,6 +15,7 @@ const editClothingItem = async (description: string) => {
   }
   emit("editClothingItem");
   emit("refreshClothingItems");
+  window.location.reload();
 };
 </script>
 
