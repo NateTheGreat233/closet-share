@@ -37,6 +37,14 @@ onBeforeMount(async () => {
 const onClose = () => {
   showContractDetails.value = false;
 };
+
+function formatDate(dateString: string | undefined | null): string {
+  if (!dateString) {
+    return "";
+  }
+  const date = new Date(dateString);
+  return date.toLocaleDateString(); // Adjust the formatting as needed
+}
 </script>
 
 <template>
@@ -50,8 +58,8 @@ const onClose = () => {
           <h2>{{ name?.toUpperCase() }}</h2>
           <div class="info-descriptions">
             <h2>owner: @{{ owner }}</h2>
-            <h2>date borrowed: TODO</h2>
-            <h2>return date: TODO</h2>
+            <h2>date borrowed: {{ formatDate(contract?.borrowDate) }}</h2>
+            <h2>return date: {{ formatDate(contract?.returnDate) }}</h2>
             <h2>notes: {{ description }}</h2>
           </div>
         </div>
