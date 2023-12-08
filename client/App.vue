@@ -7,11 +7,13 @@ import { onBeforeMount, watchEffect } from "vue";
 import { RouterView } from "vue-router";
 import router from "./router";
 import { useClothingItemStore } from "./stores/clothingItem";
+import { useGroupStore } from "./stores/group";
 
 const userStore = useUserStore();
 const { isLoggedIn } = storeToRefs(userStore);
 const { toast } = storeToRefs(useToastStore());
 const { onSignIn } = useClothingItemStore();
+const { groupStoreStartup } = useGroupStore();
 
 // Make sure to update the session before mounting the app in case the user is already logged in
 onBeforeMount(async () => {
@@ -28,7 +30,7 @@ watchEffect(async () => {
     router.push({ name: "Login" });
   } else {
     // if authenticated, let's grab all the data we need and persist in store(s)
-    const allTasks = [onSignIn];
+    const allTasks = [onSignIn(), groupStoreStartup()];
     await Promise.all(allTasks);
   }
 });

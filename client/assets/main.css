@@ -8,6 +8,7 @@
   --light-gray: #f3f1ee;
   --gray: #d9d9d9;
   --gray-hover: #d3d3d3;
+  --disabled: rgb(111, 111, 111);
 }
 
 /* make all text be the maroon color */
