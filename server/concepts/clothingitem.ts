@@ -128,7 +128,7 @@ export default class ClothingItemConcept {
    */
   async returnClothingItem(item: ObjectId) {
     // To represent someone removing the item, should just clear the borrower field
-    await this.update(item, { borrower: null });
+    await this.update(item, { borrower: undefined });
     return { msg: "Clothing item successfully returned!" };
   }
 
@@ -184,7 +184,7 @@ export default class ClothingItemConcept {
    */
   async getAllBorrowableClothingItems(query: Filter<ClothingItemDoc>) {
     const borrowableClothingItems = await this.clothingItems.readMany(
-      { ...query, $or: [{ borrower: null }, { borrower: { $exists: false } }] },
+      { ...query, borrower: undefined },
       {
         sort: { dateUpdated: -1 },
       },
