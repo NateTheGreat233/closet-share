@@ -15,6 +15,7 @@ let clothingItems = ref<Array<Record<string, string>>>([]);
 let editing = ref("");
 let searchOwner = ref("");
 
+// Should get all unborrowed clothing items that don't belong to the user
 async function getClothingItems(owner?: string) {
   let query: Record<string, string> = owner !== undefined ? { owner } : {};
   let clothingItemResults;
