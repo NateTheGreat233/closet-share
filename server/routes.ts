@@ -169,14 +169,29 @@ class Routes {
   }
 
   @Router.get("/clothingItems")
-  async getClothingItems(owner?: string) {
-    let clothingItems;
+  async getClothingItems(session: WebSessionDoc, owner?: string) {
+    const user = WebSession.getUser(session);
+
+    // Fetch user's groups
+    const userGroups = await Group.getGroupsByMember(user);
+
+    // Fetch borrowable items
+    let borrowableItems;
     if (owner) {
       const id = (await User.getUserByUsername(owner))._id;
-      clothingItems = await ClothingItem.getClothingItems(id);
+      borrowableItems = await ClothingItem.getClothingItems(id);
     } else {
-      clothingItems = await ClothingItem.getAllBorrowableClothingItems({});
+      borrowableItems = await ClothingItem.getAllBorrowableClothingItems({});
     }
+
+    // Filter items based on owner's group membership
+    const clothingItems = borrowableItems.filter(async (item) => {
+      const ownerGroups = await Group.getGroupsByMember(item.owner);
+
+      // Check if any of the owner's groups match the user's groups
+      return ownerGroups.some((ownerGroup) => userGroups.some((userGroup) => userGroup._id.equals(ownerGroup._id)));
+    });
+
     return Responses.clothingItems(clothingItems);
   }
 

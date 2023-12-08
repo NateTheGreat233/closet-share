@@ -161,6 +161,21 @@ export default class GroupConcept {
   }
 
   /**
+   * Checks if the given user is part of a given list of groups
+   * @param user the given user
+   * @param groupIds a list of group object ids
+   */
+  async isMember(user: ObjectId, groupIds: ObjectId[]) {
+    for (const groupId of groupIds) {
+      const group = await this.getGroupById(groupId);
+      if (!group.members.includes(user)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
    * Gets all requests associated with a user
    *
    * @param user the ObjectId of the user in question
