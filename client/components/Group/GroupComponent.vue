@@ -17,7 +17,6 @@ async function sendRequestToJoin(groupId: ObjectId) {
     await fetchy(`/api/group/${groupId}`, "POST", {
       body: { userId: currentUserId.value },
     });
-    console.log("sent request");
   } catch (_) {
     return;
   }

@@ -340,7 +340,7 @@ class Routes {
     return await Group.getGroupById(_id);
   }
 
-  @Router.delete("/group/:_id")
+  @Router.delete("/group/:_id/user/:userId")
   async removeMember(session: WebSessionDoc, _id: ObjectId, userId: ObjectId) {
     const modifier = WebSession.getUser(session);
     return await Group.removeMember(modifier, _id, userId);
