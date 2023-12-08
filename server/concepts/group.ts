@@ -5,6 +5,7 @@ import { BadValuesError, NotAllowedError, NotFoundError } from "./errors";
 export interface GroupDoc extends BaseDoc {
   name: string; // name doesn't have to be unique
   creator: string;
+  imageUrl: string;
   members: Array<ObjectId>;
 }
 
@@ -27,10 +28,10 @@ export default class GroupConcept {
    * @param otherMembers the people initially added to the group (optional)
    * @returns a promise that resolves to an object that contains a success message and the ObjectId of the newly created group
    */
-  async createGroup(creator: ObjectId, name: string, otherMembers = new Array<ObjectId>()) {
+  async createGroup(creator: ObjectId, name: string, imageUrl: string, otherMembers = new Array<ObjectId>()) {
     this.isNameValid(name);
     const members = otherMembers.concat([creator]);
-    const _id = await this.groups.createOne({ name, members });
+    const _id = await this.groups.createOne({ name, imageUrl, members });
     return { msg: `Group ${name} successfully created!`, group: await this.groups.readOne({ _id }) };
   }
 
@@ -81,21 +82,35 @@ export default class GroupConcept {
     return { msg: `The group with Id ${groupId} was successfully deleted!` };
   }
 
+  // /**
+  //  * Mutates the group represented by `groupId` by updating the associated name to `groupName`
+  //  * This can only be doen if the entity represented by `modifier` is a member of the group
+  //  *
+  //  * @param modifier the ObjectId of the modifier of the group
+  //  * @param groupId the ObjectId of the group to be modified
+  //  * @param groupName the new string name to be updated to
+  //  * @returns a promise that resolves to an object that contains a success message and the ObjectId of the newly updated group
+  //  */
+  // async updateName(modifier: ObjectId, groupId: ObjectId, groupName: string): Promise<{ msg: string; groupId: ObjectId }> {
+  //   this.isNameValid(groupName);
+  //   await this.canModifyGroup(modifier, groupId);
+  //   await this.groups.updateOne({ _id: groupId }, { name: groupName });
+  //   const { name, _id } = (await this.groups.readOne({ _id: groupId })) as GroupDoc;
+  //   return { msg: `The group's name was successfully updated to ${name}!`, groupId: _id };
+  // }
+
   /**
-   * Mutates the group represented by `groupId` by updating the associated name to `groupName`
-   * This can only be doen if the entity represented by `modifier` is a member of the group
-   *
-   * @param modifier the ObjectId of the modifier of the group
-   * @param groupId the ObjectId of the group to be modified
-   * @param groupName the new string name to be updated to
-   * @returns a promise that resolves to an object that contains a success message and the ObjectId of the newly updated group
+   * Mutates the group represented by `groupId`by updating
+   * @param _id the object id of the clothing item listing to update
+   * @param update the parameters to update
+   * @returns a message that the clothing item was successfully updated
    */
-  async updateName(modifier: ObjectId, groupId: ObjectId, groupName: string): Promise<{ msg: string; groupId: ObjectId }> {
-    this.isNameValid(groupName);
+  async updateGroup(modifier: ObjectId, groupId: ObjectId, update: Partial<GroupDoc>) {
+    this.sanitizeUpdate(update);
+    if (update.name) this.isNameValid(update.name);
     await this.canModifyGroup(modifier, groupId);
-    await this.groups.updateOne({ _id: groupId }, { name: groupName });
-    const { name, _id } = (await this.groups.readOne({ _id: groupId })) as GroupDoc;
-    return { msg: `The group's name was successfully updated to ${name}!`, groupId: _id };
+    await this.groups.updateOne({ _id: groupId }, update);
+    return { msg: `Group was updated successfully!`, groupId };
   }
 
   /*
@@ -325,6 +340,16 @@ export default class GroupConcept {
   private isNameValid(name: string) {
     if (!name) {
       throw new BadValuesError("Group name cannot be empty!");
+    }
+  }
+
+  private sanitizeUpdate(update: Partial<GroupDoc>) {
+    // Make sure the update cannot change the owner.
+    const allowedUpdates = ["name", "imageUrl"];
+    for (const key in update) {
+      if (!allowedUpdates.includes(key)) {
+        throw new NotAllowedError(`Cannot update '${key}' field!`);
+      }
     }
   }
 }
