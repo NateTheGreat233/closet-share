@@ -161,6 +161,22 @@ export default class GroupConcept {
   }
 
   /**
+   * Gets the group ids of a given member.
+   *
+   * @param memberId the ObjectId of the member
+   * @returns a promise that resolves into a set of object ids corresponding to groups with member, `memberId`
+   * @throws NotFoundError if there are no existing groups
+   */
+  async getGroupIdsByMember(memberId: ObjectId): Promise<Set<String>> {
+    const groups = await this.getGroupsByMember(memberId);
+    const groupIds = groups.map((group) => group._id.toString());
+
+    const groupSet = new Set<String>(groupIds);
+
+    return groupSet;
+  }
+
+  /**
    * Gets all requests associated with a user
    *
    * @param user the ObjectId of the user in question

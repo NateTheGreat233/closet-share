@@ -43,13 +43,13 @@ const onBorrow = async ({ borrowDate, returnDate }: { borrowDate: Date; returnDa
   emit("refreshClothingItems");
 };
 
-console.log(props.clothingItem);
-console.log(props.clothingItem.owner);
-console.log(props.clothingItem.name);
-console.log(props.clothingItem.description);
-console.log(props.clothingItem.imageUrl);
+// console.log(props.clothingItem);
+// console.log(props.clothingItem.owner);
+// console.log(props.clothingItem.name);
+// console.log(props.clothingItem.description);
+// console.log(props.clothingItem.imageUrl);
 
-console.log("username is " + currentUsername.value);
+// console.log("username is " + currentUsername.value);
 </script>
 
 <template>
