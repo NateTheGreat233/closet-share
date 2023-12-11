@@ -17,6 +17,7 @@ const createClothingItem = async (name: string, description: string) => {
     } catch (_) {
       return;
     }
+
     emit("refreshClothingItems");
     emptyForm();
   }

@@ -37,7 +37,7 @@ async function goToSettings() {
     </div> -->
     <div class="two-columns">
       <div class="column">
-        <ClosetListComponent />
+        <ClosetListComponent :username="currentUsername" />
       </div>
       <div class="column">
         <GroupsOnProfile />
