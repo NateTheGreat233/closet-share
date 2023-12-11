@@ -169,13 +169,32 @@ class Routes {
   }
 
   @Router.get("/clothingItems")
-  async getClothingItems(owner?: string) {
+  async getClothingItems(session: WebSessionDoc, owner?: string) {
     let clothingItems;
     if (owner) {
       const id = (await User.getUserByUsername(owner))._id;
       clothingItems = await ClothingItem.getClothingItems(id);
     } else {
-      clothingItems = await ClothingItem.getAllBorrowableClothingItems({});
+      const allClothingItems = await ClothingItem.getAllBorrowableClothingItems({});
+      // Should filter by user groups
+      const user = WebSession.getUser(session);
+      const userGroupIdStringSet = await Group.getGroupIdsByMember(user);
+      console.log(userGroupIdStringSet);
+      clothingItems = [];
+
+      for (const clothingItem of allClothingItems) {
+        const itemOwner = clothingItem.owner;
+        const ownerGroupIdStringSet = await Group.getGroupIdsByMember(itemOwner);
+        console.log(ownerGroupIdStringSet);
+        // If there is an intersection between user groups, then show the item
+        const intersection = new Set([...userGroupIdStringSet].filter((id) => ownerGroupIdStringSet.has(id)));
+        console.log(intersection);
+
+        if (intersection.size > 0) {
+          clothingItems.push(clothingItem);
+        }
+      }
+      console.log(clothingItems);
     }
     return Responses.clothingItems(clothingItems);
   }

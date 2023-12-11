@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import ClothingItemComponent from "@/components/ClothingItem/ClothingItemComponent.vue";
-import CreateClothingItemForm from "@/components/ClothingItem/CreateClothingItemForm.vue";
 import EditClothingItemForm from "@/components/ClothingItem/EditClothingItemForm.vue";
 import { useUserStore } from "@/stores/user";
 import { fetchy } from "@/utils/fetchy";
@@ -21,6 +20,7 @@ async function getClothingItems(owner?: string) {
   let clothingItemResults;
   try {
     clothingItemResults = await fetchy("/api/clothingItems", "GET", { query });
+    // console.log(clothingItemResults);
   } catch (_) {
     return;
   }
@@ -36,15 +36,17 @@ onBeforeMount(async () => {
   await getClothingItems();
   loaded.value = true;
 });
+
+// console.log(clothingItems);
 </script>
 
 <template>
-  <section v-if="isLoggedIn">
+  <!-- <section v-if="isLoggedIn">
     <h2>Create a clothing item listing:</h2>
     <CreateClothingItemForm @refreshClothingItems="getClothingItems" />
-  </section>
+  </section> -->
   <div class="row">
-    <h2 v-if="!searchOwner">ClothingItems:</h2>
+    <h2 v-if="!searchOwner">Available clothing items:</h2>
     <h2 v-else>Clothing Items owned by {{ searchOwner }}:</h2>
     <SearchClothingItemForm @getClothingItemsByOwner="getClothingItems" />
   </div>
