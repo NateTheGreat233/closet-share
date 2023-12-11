@@ -119,9 +119,14 @@ menu {
 }
 
 img {
-  max-width: 100%; /* Ensure the image doesn't exceed its container */
-  height: auto; /* Maintain aspect ratio */
-  border: 1px solid #ccc; /* Optional border for images */
+  /* max-width: 100%; Ensure the image doesn't exceed its container */
+  /* height: auto; /* Maintain aspect ratio */
+  /* border: 1px solid #ccc; Optional border for images */
+
+  width: 100%;
+  height: 300px;
+
+  object-fit: contain;
 }
 
 .brown {
