@@ -1,11 +1,11 @@
 <script setup lang="ts">
+import ClothingItemComponent from "@/components/ClothingItem/ClothingItemComponent.vue";
+import CreateClothingItemForm from "@/components/ClothingItem/CreateClothingItemForm.vue";
+import EditClothingItemForm from "@/components/ClothingItem/EditClothingItemForm.vue";
+import { useUserStore } from "@/stores/user";
+import { storeToRefs } from "pinia";
 import { onBeforeMount, ref } from "vue";
 import { fetchy } from "../../utils/fetchy";
-import { storeToRefs } from "pinia";
-import { useUserStore } from "@/stores/user";
-import ClothingItemComponent from "@/components/ClothingItem/ClothingItemComponent.vue";
-import EditClothingItemForm from "@/components/ClothingItem/EditClothingItemForm.vue";
-import CreateClothingItemForm from "@/components/ClothingItem/CreateClothingItemForm.vue";
 
 const { isLoggedIn } = storeToRefs(useUserStore());
 const props = defineProps(["username"]);
@@ -14,10 +14,10 @@ const store = ref<Array<Record<string, string>>>([]);
 const loaded = ref(false);
 let editing = ref("");
 
-async function getStore(username: string) {
+async function getStore() {
   let storeData;
   try {
-    storeData = await fetchy(`/api/store/${username}`, "GET");
+    storeData = await fetchy(`/api/store/${props.username}`, "GET");
     loaded.value = true;
   } catch (_) {
     return;
@@ -30,7 +30,7 @@ function updateEditing(id: string) {
 }
 
 onBeforeMount(async () => {
-  await getStore(username);
+  await getStore();
 });
 </script>
 
