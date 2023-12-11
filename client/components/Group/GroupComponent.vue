@@ -35,7 +35,7 @@ onBeforeMount(async () => {});
     <h1 class="name">{{ props.group.name }}</h1>
     <div class="members-box">
       <article class="members">
-        <h3>{{ users.join(",") }}</h3>
+        <h3>{{ users.join(", ") }}</h3>
       </article>
     </div>
     <div class="actions">

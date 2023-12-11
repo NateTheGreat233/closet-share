@@ -179,22 +179,22 @@ class Routes {
       // Should filter by user groups
       const user = WebSession.getUser(session);
       const userGroupIdStringSet = await Group.getGroupIdsByMember(user);
-      console.log(userGroupIdStringSet);
+      // console.log(userGroupIdStringSet);
       clothingItems = [];
 
       for (const clothingItem of allClothingItems) {
         const itemOwner = clothingItem.owner;
         const ownerGroupIdStringSet = await Group.getGroupIdsByMember(itemOwner);
-        console.log(ownerGroupIdStringSet);
+        // console.log(ownerGroupIdStringSet);
         // If there is an intersection between user groups, then show the item
         const intersection = new Set([...userGroupIdStringSet].filter((id) => ownerGroupIdStringSet.has(id)));
-        console.log(intersection);
+        // console.log(intersection);
 
         if (intersection.size > 0) {
           clothingItems.push(clothingItem);
         }
       }
-      console.log(clothingItems);
+      // console.log(clothingItems);
     }
     return Responses.clothingItems(clothingItems);
   }

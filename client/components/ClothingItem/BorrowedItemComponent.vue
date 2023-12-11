@@ -15,7 +15,7 @@ const contract = ref<any>();
 const showContractDetails = ref<boolean>(false);
 
 const onReturnClick = async () => {
-  console.log("Button clicked!");
+  // console.log("Button clicked!");
   try {
     await fetchy(`/api/return/clothingItems/${itemId}`, "PATCH", {});
   } catch (e) {
@@ -31,7 +31,7 @@ const onViewContractClick = async () => {
 
 onBeforeMount(async () => {
   contract.value = await fetchy(`/api/contracts/fromItem/${itemId}`, "GET");
-  console.log(contract.value);
+  // console.log(contract.value);
 });
 
 const onClose = () => {

@@ -26,7 +26,7 @@ const { visible } = defineProps({
 });
 
 const onApprove = async (userId: string, groupId: string) => {
-  console.log(userId, groupId);
+  // console.log(userId, groupId);
   await fetchy(`/api/group/accept`, "PUT", {
     body: { userId, groupId },
   });
