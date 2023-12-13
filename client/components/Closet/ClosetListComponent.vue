@@ -8,7 +8,7 @@ import { onBeforeMount, ref } from "vue";
 import { fetchy } from "../../utils/fetchy";
 
 const { isLoggedIn } = storeToRefs(useUserStore());
-const props = defineProps(["username"]);
+const props = defineProps(["username", "onCloset"]);
 const username = props.username;
 const store = ref<Array<Record<string, string>>>([]);
 const loaded = ref(false);
@@ -35,7 +35,7 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  <section v-if="isLoggedIn">
+  <section v-if="isLoggedIn && onCloset">
     <h2>Create a clothing item listing:</h2>
     <CreateClothingItemForm @refreshClothingItems="getStore" />
   </section>
