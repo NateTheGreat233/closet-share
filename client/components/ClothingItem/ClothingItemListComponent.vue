@@ -67,6 +67,8 @@ onBeforeMount(async () => {
       </div>
     </template>
   </section>
+  <div v-else-if="loaded && clothingItems.length == 0"><p>No clothing items found</p></div>
+  <center v-else><h2>Loading...</h2></center>
   <div v-if="loaded && myGroups?.length == 0">
     <center>
       <h2>You are currently not in any groups</h2>
@@ -75,8 +77,6 @@ onBeforeMount(async () => {
       </div>
     </center>
   </div>
-  <div v-else-if="loaded"><p>No clothing items found</p></div>
-  <center v-else><h2>Loading...</h2></center>
 </template>
 
 <style scoped>
