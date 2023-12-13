@@ -30,15 +30,15 @@ onBeforeMount(async () => {
 });
 
 const refresh = async () => {
-  getAllGroups();
-  getMyRequests();
+  await getAllGroups();
+  await getMyRequests();
 };
 </script>
 
 <template>
   <main>
-    <div class="container">
-      <div v-if="loaded && allGroups && allGroups.length !== 0" v-for="group in allGroups" class="groups-container" v-bind:key="group.name">
+    <div v-if="loaded && allGroups && allGroups.length !== 0" class="container">
+      <div v-for="group in allGroups" class="groups-container" v-bind:key="group.name">
         <div class="group-container">
           <GroupComponent :group="group" :allUsers="users" @refreshGroups="refresh" />
         </div>
