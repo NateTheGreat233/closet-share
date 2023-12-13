@@ -2,11 +2,13 @@
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { onBeforeMount, ref } from "vue";
+import { useGroupStore } from "../../stores/group";
 import { fetchy } from "../../utils/fetchy";
 
 const groups = ref<Array<Record<string, string>>>([]);
 const loaded = ref(false);
 const { currentUserId } = storeToRefs(useUserStore());
+const { getAllGroups, getMyRequests } = useGroupStore();
 
 async function getGroupsOfUser() {
   let groupsData;
@@ -18,11 +20,16 @@ async function getGroupsOfUser() {
   }
   groups.value = groupsData;
 }
+const refresh = async () => {
+  await getAllGroups();
+  await getMyRequests();
+};
 
 async function leaveGroup(groupId: string) {
   try {
     await fetchy(`/api/group/${groupId}/user/${currentUserId.value}`, "DELETE");
     await getGroupsOfUser();
+    await refresh();
   } catch (_) {
     return;
   }

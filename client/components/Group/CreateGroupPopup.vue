@@ -1,15 +1,22 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { useGroupStore } from "../../stores/group";
 import { fetchy } from "../../utils/fetchy";
 import ImageUploader from "../ClothingItem/ImageUploader.vue";
 
 const imageContent = ref("");
 const name = ref("");
-const emit = defineEmits(["refreshGroups", "onClose"]);
+const emit = defineEmits(["onClose"]);
+const { getAllGroups, getMyRequests } = useGroupStore();
 
 const { visible } = defineProps({
   visible: Boolean,
 });
+
+const refresh = async () => {
+  await getAllGroups();
+  await getMyRequests();
+};
 
 const createGroup = async () => {
   if (imageContent.value) {
@@ -20,7 +27,7 @@ const createGroup = async () => {
     } catch (_) {
       return;
     }
-    emit("refreshGroups");
+    await refresh();
     emit("onClose");
   }
 };
