@@ -2,12 +2,14 @@
 import ClothingItemComponent from "@/components/ClothingItem/ClothingItemComponent.vue";
 import EditClothingItemForm from "@/components/ClothingItem/EditClothingItemForm.vue";
 import { fetchy } from "@/utils/fetchy";
+import { storeToRefs } from "pinia";
 import { onBeforeMount, ref } from "vue";
 import router from "../../router";
 import { useGroupStore } from "../../stores/group";
 import SearchClothingItemForm from "./SearchClothingItemForm.vue";
 
-const { myGroups, getMyGroups } = useGroupStore();
+const { getMyGroups } = useGroupStore();
+const { myGroups } = storeToRefs(useGroupStore());
 
 const loaded = ref(false);
 let clothingItems = ref<Array<Record<string, string>>>([]);

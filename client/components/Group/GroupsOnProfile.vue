@@ -5,21 +5,11 @@ import { onBeforeMount, ref } from "vue";
 import { useGroupStore } from "../../stores/group";
 import { fetchy } from "../../utils/fetchy";
 
-const groups = ref<Array<Record<string, string>>>([]);
 const loaded = ref(false);
 const { currentUserId } = storeToRefs(useUserStore());
 const { getAllGroups, getMyGroups } = useGroupStore();
+const { myGroups } = storeToRefs(useGroupStore());
 
-async function getGroupsOfUser() {
-  let groupsData;
-  try {
-    groupsData = await fetchy(`/api/groups/user/${currentUserId.value}`, "GET");
-    loaded.value = true;
-  } catch (_) {
-    return;
-  }
-  groups.value = groupsData;
-}
 const refresh = async () => {
   await getAllGroups();
   await getMyGroups();
@@ -28,7 +18,7 @@ const refresh = async () => {
 async function leaveGroup(groupId: string) {
   try {
     await fetchy(`/api/group/${groupId}/user/${currentUserId.value}`, "DELETE");
-    await getGroupsOfUser();
+    await getMyGroups();
     await refresh();
   } catch (_) {
     return;
@@ -36,7 +26,7 @@ async function leaveGroup(groupId: string) {
 }
 
 onBeforeMount(async () => {
-  await getGroupsOfUser();
+  await getMyGroups();
 });
 </script>
 
@@ -47,8 +37,8 @@ onBeforeMount(async () => {
         <h1>my groups</h1>
         <!-- <Search :inputWidth="'200px'" /> -->
       </div>
-      <section class="groups" v-if="loaded && groups.length !== 0">
-        <div v-for="group in groups" class="groups-container" v-bind:key="group.name">
+      <section class="groups" v-if="loaded && myGroups.length !== 0">
+        <div v-for="group in myGroups" class="groups-container" v-bind:key="group.name">
           <div class="group-container">
             <img :src="group.imageUrl" alt="photo" />
             <div class="groupInfo">

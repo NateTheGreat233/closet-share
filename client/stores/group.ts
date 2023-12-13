@@ -7,7 +7,7 @@ export const useGroupStore = defineStore(
   "group",
   () => {
     const allGroups = ref<Array<any>>();
-    const myGroups = ref<Array<any>>();
+    const myGroups = ref<Array<any>>([]);
     const myRequests = ref<Array<any>>();
     const myGroupRequests = ref<Array<any>>();
 
