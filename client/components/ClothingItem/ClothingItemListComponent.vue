@@ -58,16 +58,12 @@ onBeforeMount(async () => {
     <SearchClothingItemForm @getClothingItemsByOwner="getClothingItems" />
   </div>
   <section class="clothingItems" v-if="loaded && clothingItems.length !== 0">
-    <template v-for="(group, index) in Math.ceil(clothingItems.length / 3)" :key="index">
-      <div class="row">
-        <template v-for="clothingItem in clothingItems.slice(index * 3, index * 3 + 3)" :key="clothingItem._id">
-          <article>
-            <ClothingItemComponent v-if="editing !== clothingItem._id" :clothingItem="clothingItem" @refreshClothingItems="getClothingItems" @editClothingItem="updateEditing" />
-            <EditClothingItemForm v-else :clothingItem="clothingItem" @refreshClothingItems="getClothingItems" @editClothingItem="updateEditing" />
-          </article>
-        </template>
+    <div class="item" v-for="item in clothingItems" :key="item._id">
+      <div class="container">
+        <ClothingItemComponent v-if="editing !== item._id" :clothingItem="item" @refreshClothingItems="getClothingItems" @editClothingItem="updateEditing" />
+        <EditClothingItemForm v-else :clothingItem="item" @refreshClothingItems="getClothingItems" @editClothingItem="updateEditing" />
       </div>
-    </template>
+    </div>
   </section>
   <div v-else-if="loaded && clothingItems.length == 0"><p>No clothing items found</p></div>
   <center v-else><h2>Loading...</h2></center>
@@ -92,20 +88,27 @@ section,
 p,
 .row {
   margin: 0 auto;
-  max-width: 60em;
+  max-width: 80em;
+}
+.container {
+  width: 300px;
+}
+.clothingItems {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1em;
 }
 
-article {
+.item {
   background-color: var(--base-bg);
-  flex-basis: calc(33.33% - 20px);
-  box-sizing: border-box;
-  border-right: 1px solid #ccc;
-  padding-right: 20px;
   border-radius: 1em;
   display: flex;
   flex-direction: column;
   gap: 0.5em;
   padding: 1em;
+  margin: 5px;
 }
 
 .posts {
