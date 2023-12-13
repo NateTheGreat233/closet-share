@@ -28,15 +28,6 @@ async function leaveGroup(groupId: string) {
   }
 }
 
-async function deleteGroup(groupId: string) {
-  try {
-    await fetchy(`/api/groups/${groupId}`, "DELETE");
-    await getGroupsOfUser();
-  } catch (_) {
-    return;
-  }
-}
-
 onBeforeMount(async () => {
   await getGroupsOfUser();
 });
@@ -57,7 +48,6 @@ onBeforeMount(async () => {
               <h1 class="name">{{ group.name }}</h1>
               <div class="actions">
                 <button class="btn-big pure-button brown" @click="() => leaveGroup(group._id)">Leave</button>
-                <button class="btn-big pure-button red" @click="() => deleteGroup(group._id)">Delete</button>
               </div>
             </div>
           </div>
