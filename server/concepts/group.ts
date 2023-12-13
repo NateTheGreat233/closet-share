@@ -64,7 +64,12 @@ export default class GroupConcept {
   async removeMember(modifier: ObjectId, groupId: ObjectId, memberId: ObjectId): Promise<{ msg: string; groupId: ObjectId }> {
     await this.canModifyGroup(modifier, groupId);
     const { members, _id } = (await this.groups.readOne({ _id: groupId })) as GroupDoc;
-    await this.groups.updateOne({ _id: groupId }, { members: members.filter((id) => id.toString() !== memberId.toString()) });
+    const remaining = members.filter((id) => id.toString() !== memberId.toString());
+    if (remaining.length == 0) {
+      await this.groups.deleteOne({ _id: groupId });
+    } else {
+      await this.groups.updateOne({ _id: groupId }, { members: remaining });
+    }
     return { msg: `Member with id ${memberId} was successfully removed from the group!`, groupId: _id };
   }
 
@@ -76,11 +81,11 @@ export default class GroupConcept {
    * @param groupId the ObjectId of the group to be modified
    * @returns a promise that resolves to an object that contains a successful deletion message
    */
-  async deleteGroup(modifier: ObjectId, groupId: ObjectId): Promise<{ msg: string }> {
-    await this.canModifyGroup(modifier, groupId);
-    await this.groups.deleteOne({ _id: groupId });
-    return { msg: `The group with Id ${groupId} was successfully deleted!` };
-  }
+  // async deleteGroup(modifier: ObjectId, groupId: ObjectId): Promise<{ msg: string }> {
+  //   await this.canModifyGroup(modifier, groupId);
+  //   await this.groups.deleteOne({ _id: groupId });
+  //   return { msg: `The group with Id ${groupId} was successfully deleted!` };
+  // }
 
   // /**
   //  * Mutates the group represented by `groupId` by updating the associated name to `groupName`

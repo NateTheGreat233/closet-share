@@ -336,11 +336,11 @@ class Routes {
     return await Group.updateGroup(user, _id, update);
   }
 
-  @Router.delete("/groups/:_id")
-  async deleteGroup(session: WebSessionDoc, _id: ObjectId) {
-    const user = WebSession.getUser(session);
-    return await Group.deleteGroup(user, _id);
-  }
+  // @Router.delete("/groups/:_id")
+  // async deleteGroup(session: WebSessionDoc, _id: ObjectId) {
+  //   const user = WebSession.getUser(session);
+  //   return await Group.deleteGroup(user, _id);
+  // }
 
   @Router.get("/groups")
   async getGroups() {
