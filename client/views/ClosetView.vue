@@ -18,7 +18,7 @@ onMounted(async () => {
 <template>
   <main>
     <h1>@{{ username }}'s Closet</h1>
-    <ClosetListComponent v-if="username" :username="username" />
+    <ClosetListComponent v-if="username" :username="username" :onCloset="true" />
   </main>
 </template>
 

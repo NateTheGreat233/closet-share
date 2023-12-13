@@ -17,6 +17,10 @@ const { currentProfilePhoto, currentUsername, isLoggedIn } = storeToRefs(useUser
 async function goToSettings() {
   await router.push({ name: "Settings", params: { username: currentUsername.value } });
 }
+
+const goToCloset = async () => {
+  await router.push({ name: "Closet", params: { username: currentUsername.value } });
+};
 </script>
 
 <template>
@@ -26,18 +30,17 @@ async function goToSettings() {
     </h1>
   </section>
   <main class="column">
-    <div>
+    <center>
       <h1>{{ currentUsername }}'s Profile</h1>
       <img v-if="currentProfilePhoto" class="photo" :src="currentProfilePhoto" alt="photo" />
       <img v-else class="photo" :src="DEFAULT_PHOTO" alt="photo" />
-    </div>
-    <!-- <div>
-      <h1>My Closet</h1>
-      <ClosetListComponent />
-    </div> -->
+    </center>
     <div class="two-columns">
       <div class="column">
-        <ClosetListComponent :username="currentUsername" />
+        <div class="button-container" @click="goToCloset">
+          <h2 class="button-text">add items to your closet</h2>
+        </div>
+        <ClosetListComponent :username="currentUsername" :onCloset="false" />
       </div>
       <div class="column">
         <GroupsOnProfile />
@@ -58,6 +61,7 @@ async function goToSettings() {
 }
 .column {
   flex: 1;
+  margin-top: 50px;
 }
 
 .settings-image {
@@ -68,5 +72,21 @@ async function goToSettings() {
 }
 .settings-button {
   margin-left: 80%;
+}
+
+.button-text {
+  margin: 0px;
+}
+
+.button-container {
+  padding: 10px;
+  padding-inline: 50px;
+  background-color: var(--gray);
+  border-radius: 10px;
+}
+
+.button-container:hover {
+  background-color: var(--gray-hover);
+  cursor: pointer;
 }
 </style>
