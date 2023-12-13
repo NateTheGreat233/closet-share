@@ -27,6 +27,7 @@ async function leaveGroup(groupId: string) {
 
 onBeforeMount(async () => {
   await getMyGroups();
+  loaded.value = true;
 });
 </script>
 
@@ -50,8 +51,11 @@ onBeforeMount(async () => {
           </div>
         </div>
       </section>
-      <section class="groups-container" v-else>
+      <section class="groups-container" v-else-if="loaded && myGroups.length == 0">
         <h2>This user is not in any groups currently</h2>
+      </section>
+      <section class="groups-container" v-else>
+        <h2>Loading...</h2>
       </section>
     </div>
   </main>
