@@ -7,7 +7,7 @@ import ImageUploader from "../ClothingItem/ImageUploader.vue";
 const imageContent = ref("");
 const name = ref("");
 const emit = defineEmits(["onClose"]);
-const { getAllGroups, getMyRequests } = useGroupStore();
+const { getAllGroups, getMyGroups } = useGroupStore();
 
 const { visible } = defineProps({
   visible: Boolean,
@@ -15,7 +15,7 @@ const { visible } = defineProps({
 
 const refresh = async () => {
   await getAllGroups();
-  await getMyRequests();
+  await getMyGroups();
 };
 
 const createGroup = async () => {

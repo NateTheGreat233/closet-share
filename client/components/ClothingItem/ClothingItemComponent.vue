@@ -92,6 +92,13 @@ p {
   font-size: 1.2em;
 }
 
+.name,
+.author,
+.description,
+.base {
+  padding: 5px;
+}
+
 menu {
   list-style-type: none;
   display: flex;
@@ -132,6 +139,8 @@ img {
 .brown {
   background-color: #735751; /* Brown color for Borrow button */
   color: white; /* Text color for Borrow button */
+  margin: 5px;
+  margin-bottom: 20px;
 }
 
 .green {

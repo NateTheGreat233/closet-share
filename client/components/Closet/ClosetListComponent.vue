@@ -40,16 +40,12 @@ onBeforeMount(async () => {
     <CreateClothingItemForm @refreshClothingItems="getStore" />
   </section>
   <section class="clothingItems" v-if="loaded && store.length !== 0">
-    <template v-for="(group, index) in Math.ceil(store.length / 3)" :key="index">
-      <div class="row">
-        <template v-for="clothingItem in store.slice(index * 3, index * 3 + 3)" :key="clothingItem._id">
-          <article>
-            <ClothingItemComponent v-if="editing !== clothingItem._id" :clothingItem="clothingItem" @refreshClothingItems="getStore" @editClothingItem="updateEditing" />
-            <EditClothingItemForm v-else :clothingItem="clothingItem" @refreshClothingItems="getStore" @editClothingItem="updateEditing" />
-          </article>
-        </template>
+    <div class="item" v-for="item in store" :key="item._id">
+      <div class="container">
+        <ClothingItemComponent v-if="editing !== item._id" :clothingItem="item" @refreshClothingItems="getStore" @editClothingItem="updateEditing" />
+        <EditClothingItemForm v-else :clothingItem="item" @refreshClothingItems="getStore" @editClothingItem="updateEditing" />
       </div>
-    </template>
+    </div>
   </section>
 </template>
 
@@ -66,21 +62,27 @@ p,
   margin: 0 auto;
   max-width: 60em;
 }
+
+.container {
+  width: 260px;
+}
 .clothingItems {
-  margin-top: 50px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1em;
+  margin-top: 20px;
 }
 
-article {
+.item {
   background-color: var(--base-bg);
-  flex-basis: calc(33.33% - 20px);
-  box-sizing: border-box;
-  border-right: 1px solid #ccc;
-  padding-right: 20px;
   border-radius: 1em;
   display: flex;
   flex-direction: column;
   gap: 0.5em;
   padding: 1em;
+  margin: 5px;
 }
 
 .posts {
