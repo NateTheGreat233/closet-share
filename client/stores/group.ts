@@ -7,21 +7,35 @@ export const useGroupStore = defineStore(
   "group",
   () => {
     const allGroups = ref<Array<any>>();
+    const myGroups = ref<Array<any>>();
     const myRequests = ref<Array<any>>();
     const myGroupRequests = ref<Array<any>>();
 
     const getAllGroups = async () => {
       try {
         allGroups.value = await fetchy(`/api/groups`, "GET");
-      } catch (_) {}
+      } catch (_) {
+        return;
+      }
     };
+
+    async function getMyGroups() {
+      try {
+        const { currentUserId } = useUserStore();
+        myGroups.value = await fetchy(`/api/groups/user/${currentUserId}`, "GET");
+      } catch (_) {
+        return;
+      }
+    }
 
     const getMyRequests = async () => {
       const { currentUserId } = useUserStore();
       try {
         const allRequests = await fetchy(`/api/groups/user/${currentUserId}/requests`, "GET");
         myRequests.value = allRequests.filter((request: any) => request.status === "pending");
-      } catch (_) {}
+      } catch (_) {
+        return;
+      }
     };
 
     const getMyGroupRequests = async () => {
@@ -33,7 +47,9 @@ export const useGroupStore = defineStore(
           requests = requests.concat(await fetchy(`/api/group/${group._id}/requests`, "GET"));
         }
         myGroupRequests.value = requests.filter((request) => request.status === "pending");
-      } catch (_) {}
+      } catch (_) {
+        return;
+      }
     };
 
     const groupStoreStartup = async () => {
@@ -51,10 +67,12 @@ export const useGroupStore = defineStore(
     return {
       allGroups,
       myRequests,
+      myGroups,
       myGroupRequests,
       groupStoreStartup,
       getMyRequests,
       getAllGroups,
+      getMyGroups,
       resetStore,
     };
   },

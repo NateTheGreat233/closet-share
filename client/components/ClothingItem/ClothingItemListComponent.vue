@@ -1,18 +1,22 @@
 <script setup lang="ts">
 import ClothingItemComponent from "@/components/ClothingItem/ClothingItemComponent.vue";
 import EditClothingItemForm from "@/components/ClothingItem/EditClothingItemForm.vue";
-import { useUserStore } from "@/stores/user";
 import { fetchy } from "@/utils/fetchy";
-import { storeToRefs } from "pinia";
 import { onBeforeMount, ref } from "vue";
+import router from "../../router";
+import { useGroupStore } from "../../stores/group";
 import SearchClothingItemForm from "./SearchClothingItemForm.vue";
 
-const { isLoggedIn } = storeToRefs(useUserStore());
+const { myGroups, getMyGroups } = useGroupStore();
 
 const loaded = ref(false);
 let clothingItems = ref<Array<Record<string, string>>>([]);
 let editing = ref("");
 let searchOwner = ref("");
+
+const goToGroups = async () => {
+  await router.push({ name: "Groups" });
+};
 
 // Should get all unborrowed clothing items that don't belong to the user
 async function getClothingItems(owner?: string) {
@@ -33,6 +37,7 @@ function updateEditing(id: string) {
 }
 
 onBeforeMount(async () => {
+  await getMyGroups();
   await getClothingItems();
   loaded.value = true;
 });
@@ -62,8 +67,16 @@ onBeforeMount(async () => {
       </div>
     </template>
   </section>
-  <p v-else-if="loaded">No clothing items found</p>
-  <p v-else>Loading...</p>
+  <div v-if="loaded && myGroups?.length == 0">
+    <center>
+      <h2>You are currently not in any groups</h2>
+      <div class="button-container" @click="goToGroups">
+        <h2 class="button-text">click here to join a group and view member's clothing items</h2>
+      </div>
+    </center>
+  </div>
+  <div v-else-if="loaded"><p>No clothing items found</p></div>
+  <center v-else><h2>Loading...</h2></center>
 </template>
 
 <style scoped>
@@ -103,5 +116,22 @@ article {
   margin: 0 auto;
   max-width: 60em;
   margin-bottom: 20px;
+}
+
+.button-text {
+  margin: 0px;
+}
+
+.button-container {
+  padding: 10px;
+  padding-inline: 50px;
+  background-color: var(--gray);
+  border-radius: 10px;
+  width: 800px;
+}
+
+.button-container:hover {
+  background-color: var(--gray-hover);
+  cursor: pointer;
 }
 </style>

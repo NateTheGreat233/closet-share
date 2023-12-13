@@ -8,7 +8,7 @@ import { fetchy } from "../../utils/fetchy";
 const groups = ref<Array<Record<string, string>>>([]);
 const loaded = ref(false);
 const { currentUserId } = storeToRefs(useUserStore());
-const { getAllGroups, getMyRequests } = useGroupStore();
+const { getAllGroups, getMyGroups } = useGroupStore();
 
 async function getGroupsOfUser() {
   let groupsData;
@@ -22,7 +22,7 @@ async function getGroupsOfUser() {
 }
 const refresh = async () => {
   await getAllGroups();
-  await getMyRequests();
+  await getMyGroups();
 };
 
 async function leaveGroup(groupId: string) {
