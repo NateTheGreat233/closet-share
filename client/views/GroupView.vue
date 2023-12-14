@@ -29,7 +29,7 @@ const { myRequests, myGroupRequests } = storeToRefs(useGroupStore());
           </div>
         </div>
         <div class="button-container" style="position: relative" @click="() => (showRequestsPopup = true)">
-          <h2 class="button-text">my requests</h2>
+          <h2 class="button-text">requested groups</h2>
           <div v-if="myRequests !== undefined && myRequests.length > 0" class="badge">
             <h4>{{ myRequests.length }}</h4>
           </div>
