@@ -42,6 +42,9 @@ onBeforeMount(async () => {});
       <menu v-if="!users.includes(currentUsername) && !(myRequests ?? []).map((request) => request.groupId).includes(props.group._id)">
         <li><button class="btn-big pure-button brown" @click="() => sendRequestToJoin(props.group._id)">Request to Join</button></li>
       </menu>
+      <menu v-else-if="!users.includes(currentUsername) && (myRequests ?? []).map((request) => request.groupId).includes(props.group._id)">
+        <li><button class="btn-big pure-button lightBrown">Request Pending...</button></li>
+      </menu>
       <div class="base">
         <article class="timestamp">
           <p v-if="props.group.dateCreated !== props.group.dateUpdated">Edited on: {{ formatDate(props.group.dateUpdated) }}</p>
@@ -101,6 +104,11 @@ img {
 .brown {
   background-color: #735751; /* Brown color for Borrow button */
   color: white; /* Text color for Borrow button */
+}
+
+.lightBrown {
+  background-color: #f4edde; /* Brown color for Borrow button */
+  color: #735751; /* Text color for Borrow button */
 }
 .green {
   background-color: #a5a58d; /* Green color for Return button */
