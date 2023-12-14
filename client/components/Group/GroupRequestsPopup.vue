@@ -42,6 +42,7 @@ onBeforeMount(async () => {
   <div v-if="visible" class="modal-container" @click="() => emit('onClose')">
     <div class="modal-content" @click="(e) => e.stopPropagation()">
       <h1>my group approvals</h1>
+      <h3>Here you can accept requests from users who want to join groups you are in.</h3>
       <div v-for="request in requestInfo" style="width: 100%; overflow-y: scroll">
         <div class="request-container">
           <div style="display: flex; flex-direction: row; align-items: center; gap: 20px">

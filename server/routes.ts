@@ -179,22 +179,23 @@ class Routes {
       // Should filter by user groups
       const user = WebSession.getUser(session);
       const userGroupIdStringSet = await Group.getGroupIdsByMember(user);
-      // console.log(userGroupIdStringSet);
       clothingItems = [];
 
       for (const clothingItem of allClothingItems) {
         const itemOwner = clothingItem.owner;
+
+        if (itemOwner.toString() === user.toString()) {
+          // Don't want to display user's own clothing items
+          continue;
+        }
         const ownerGroupIdStringSet = await Group.getGroupIdsByMember(itemOwner);
-        // console.log(ownerGroupIdStringSet);
         // If there is an intersection between user groups, then show the item
         const intersection = new Set([...userGroupIdStringSet].filter((id) => ownerGroupIdStringSet.has(id)));
-        // console.log(intersection);
 
         if (intersection.size > 0) {
           clothingItems.push(clothingItem);
         }
       }
-      // console.log(clothingItems);
     }
     return Responses.clothingItems(clothingItems);
   }
@@ -241,7 +242,7 @@ class Routes {
   async deleteClothingItem(session: WebSessionDoc, _id: ObjectId) {
     const user = WebSession.getUser(session);
     await ClothingItem.isOwner(user, _id);
-    return ClothingItem.removeClothingItem(_id);
+    return await ClothingItem.removeClothingItem(_id);
   }
 
   @Router.patch("/borrow/clothingItems/:_id")

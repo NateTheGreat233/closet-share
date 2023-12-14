@@ -19,7 +19,8 @@ const { visible } = defineProps({
 <template>
   <div v-if="visible" class="modal-container" @click="() => emit('onClose')">
     <div class="modal-content" @click="(e) => e.stopPropagation()">
-      <h1>my requests</h1>
+      <h1>requested groups</h1>
+      <h3>Here you'll find all pending requests for groups you've requested to join.</h3>
       <div v-for="request in requestInfo" style="width: 100%; overflow-y: scroll">
         <div class="request-container">
           <div style="display: flex; flex-direction: row; align-items: center; gap: 20px">
