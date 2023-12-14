@@ -242,7 +242,7 @@ class Routes {
   async deleteClothingItem(session: WebSessionDoc, _id: ObjectId) {
     const user = WebSession.getUser(session);
     await ClothingItem.isOwner(user, _id);
-    return ClothingItem.removeClothingItem(_id);
+    return await ClothingItem.removeClothingItem(_id);
   }
 
   @Router.patch("/borrow/clothingItems/:_id")
